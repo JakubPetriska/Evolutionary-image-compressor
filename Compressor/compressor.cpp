@@ -42,7 +42,7 @@ int Compressor::readSourceImageFile() {
 	FILE* file;
 	errno_t err = fopen_s(
 		&file,
-		compressorArgs->source_image_path,
+		compressorArgs->sourceImagePath,
 		"rb");
 	if (err != 0 || file == NULL) {
 		return ERROR_FILE_COULD_NOT_OPEN_FILE;
@@ -51,6 +51,8 @@ int Compressor::readSourceImageFile() {
 	// Read 14 bytes of Bitmap File Header
 	bitmapFileHeader = new int8_t[BITMAP_FILE_HEADER_SIZE];
 	fread(bitmapFileHeader, 1, BITMAP_FILE_HEADER_SIZE, file);
+
+	uint32_t totalFileSize = *(int32_t*)&bitmapFileHeader[2];
 
 	// Figure where pixel data start
 	int32_t rawDataStartOffset = *(int32_t*)&bitmapFileHeader[10];
@@ -70,6 +72,12 @@ int Compressor::readSourceImageFile() {
 	sourceHeight = *(int32_t*)&bitmapInfoHeaderAndRest[8];
 	sourceColorDepth = *(uint16_t*)&bitmapInfoHeaderAndRest[14];
 
+	uint32_t compressionMethod = *(uint16_t*)&bitmapInfoHeaderAndRest[16];
+	if (compressionMethod != 0) {
+		fclose(file);
+		return ERROR_FILE_READING_UNSUPPORTED_IMAGE_COMPRESSION;
+	}
+
 	if (sourceColorDepth != 24) {
 		fclose(file);
 		return ERROR_FILE_READING_UNSUPPORTED_COLOR_DEPTH;
@@ -85,6 +93,15 @@ int Compressor::readSourceImageFile() {
 		sourceImageData[i] = newRow;
 	}
 
+	sourceImageFileRestSize = totalFileSize
+		- BITMAP_FILE_HEADER_SIZE 
+		- bitmapInfoHeaderAndRestSize 
+		- (sourceHeight * rowWidthInBytes);
+	if (sourceImageFileRestSize > 0) {
+		sourceImageFileRest = new int8_t[sourceHeight];
+		fread(sourceImageFileRest, 1, sourceImageFileRestSize, file);
+	}
+
 	fclose(file);
 	return 0;
 }
@@ -93,7 +110,7 @@ int Compressor::writeDestinationImageFile(uint8_t ** imageData) {
 	FILE* file;
 	errno_t err = fopen_s(
 		&file,
-		compressorArgs->destination_image_path,
+		compressorArgs->destinationImagePath,
 		"wb");
 	if (err != 0 || file == NULL) {
 		return ERROR_FILE_COULD_NOT_OPEN_FILE;
@@ -105,6 +122,11 @@ int Compressor::writeDestinationImageFile(uint8_t ** imageData) {
 	for (int i = 0; i < sourceHeight; ++i) {
 		fwrite(sourceImageData[i], 1, rowWidthInBytes, file);
 	}
+	
+	if (sourceImageFileRestSize > 0) {
+		fwrite(sourceImageFileRest, 1, sourceImageFileRestSize, file);
+	}
+
 	fflush(file);
 	fclose(file);
 	return 0;

@@ -2,6 +2,7 @@
 #include "compressor.h"
 
 using namespace std;
+using namespace lossycompressor;
 
 int main(int argc, char* argv[]) {
 	if (argc < 4) {
@@ -9,16 +10,16 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	compressor_args compressorArgs;
-	compressorArgs.source_image_path = argv[1];
-	compressorArgs.destination_compressed_path = argv[2];
-	compressorArgs.destination_image_path = argv[3];
-	compressorArgs.max_compressed_size_bytes = atoi(argv[4]);
+	CompressorArgs compressorArgs;
+	compressorArgs.sourceImagePath = argv[1];
+	compressorArgs.destinationCompressedPath = argv[2];
+	compressorArgs.destinationImagePath = argv[3];
+	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
 
-	printf("%s\n", compressorArgs.source_image_path);
-	printf("%s\n", compressorArgs.destination_compressed_path);
-	printf("%s\n", compressorArgs.destination_image_path);
-	printf("%d\n", compressorArgs.max_compressed_size_bytes);
+	printf("%s\n", compressorArgs.sourceImagePath);
+	printf("%s\n", compressorArgs.destinationCompressedPath);
+	printf("%s\n", compressorArgs.destinationImagePath);
+	printf("%d\n", compressorArgs.maxCompressedSizeBytes);
 
 	Compressor compressor(&compressorArgs);
 	compressor.compress();
