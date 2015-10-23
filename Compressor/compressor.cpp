@@ -1,4 +1,5 @@
 #include "compressor.h"
+#include "localsearch.h"
 #include <cstdio>
 
 using namespace lossycompressor;
@@ -11,6 +12,22 @@ int Compressor::compress() {
 		releaseMemory();
 		return err;
 	}
+
+	CompressorAlgorithm * compressAlgorithm;
+	
+	compressAlgorithm = new LocalSearch();
+
+	// Prepare the arguments for compression algorithm
+	CompressorAlgorithmArgs compressorAlgorithmArgs;
+	compressorAlgorithmArgs.sourceWidth = sourceWidth;
+	compressorAlgorithmArgs.sourceHeight = sourceHeight;
+	compressorAlgorithmArgs.sourceImageData = sourceImageData;
+	
+	// Calculate exact size of compressed file
+	// TODO
+
+	compressAlgorithm->compress(&compressorAlgorithmArgs);
+	delete compressAlgorithm;
 	
 	err = writeDestinationImageFile(sourceImageData);
 	if (err != 0) {

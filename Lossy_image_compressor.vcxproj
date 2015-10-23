@@ -120,10 +120,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Compressor\compressor.cpp" />
+    <ClCompile Include="Compressor\localsearch.cpp" />
     <ClCompile Include="Compressor\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h" />
+    <ClInclude Include="Compressor\localsearch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

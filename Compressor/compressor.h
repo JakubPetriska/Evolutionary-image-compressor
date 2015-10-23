@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+
 namespace lossycompressor {
 	struct CompressorArgs {
 		const char * sourceImagePath;
@@ -58,6 +59,7 @@ namespace lossycompressor {
 
 	// TODO only uses fixed color depth of 24 bits
 	class CompressorAlgorithm {
+	public:
 		virtual int compress(CompressorAlgorithmArgs* args) = 0;
 	};
 }
