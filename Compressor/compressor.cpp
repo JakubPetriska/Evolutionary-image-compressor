@@ -1,6 +1,8 @@
 #include "compressor.h"
 #include <cstdio>
 
+using namespace lossycompressor;
+
 int Compressor::compress() {
 	int err;
 	err = readSourceImageFile();
@@ -29,6 +31,9 @@ void Compressor::releaseMemory() {
 		delete[] bitmapInfoHeaderAndRest;
 	}
 	if (sourceImageData != NULL) {
+		for (int i = 0; i < sourceHeight; ++i) {
+			delete[] sourceImageData[i];
+		}
 		delete[] sourceImageData;
 	}
 }
