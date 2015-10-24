@@ -21,7 +21,7 @@
     <ClCompile Include="Compressor\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Compressor\localsearch.cpp">
+    <ClCompile Include="Compressor\compressoralgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="Compressor\compressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Compressor\localsearch.h">
+    <ClInclude Include="Compressor\compressoralgorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

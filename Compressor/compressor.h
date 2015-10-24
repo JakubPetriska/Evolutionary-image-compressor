@@ -3,7 +3,27 @@
 #include <string>
 #include <cstdint>
 
+/*
+	Class compressing image files on given paths into voronoi diagram.
+
+	Currently only images in BMP format with 24 bit color depth are supported.
+
+	Compressed file has following format:
+		4 bytes - image width
+		4 bytes - image height
+		2 bytes - image color depth
+		4 bytes - count of points in diagram
+		Rest of the file contains diagram points in following format:
+			4 bytes - point x coordinate
+			4 bytes - point y coordinate
+			24 bytes - point color
+*/
+
 namespace lossycompressor {
+
+	const int COMPRESSED_FILE_HEADER_SIZE = 14;
+	const int COMPRESSED_FILE_POINT_POSITION_SIZE = 8;
+
 	struct CompressorArgs {
 		const char * sourceImagePath;
 		const char * destinationCompressedPath;
@@ -15,12 +35,11 @@ namespace lossycompressor {
 		const int BITMAP_FILE_HEADER_SIZE = 14;
 		const int BITMAP_INFO_HEADER_SIZE = 40;
 
-		CompressorArgs* compressorArgs;
+		CompressorArgs* args;
 
 		// Information from source file's headers
 		int32_t sourceWidth;
 		int32_t sourceHeight;
-		uint16_t sourceColorDepth;
 		// Raw image data (stored for later writing into the output file)
 		int8_t * bitmapFileHeader = NULL;
 		int bitmapInfoHeaderAndRestSize;
@@ -37,29 +56,17 @@ namespace lossycompressor {
 		void * compressedImage;
 
 		int readSourceImageFile();
-		int writeDestinationImageFile(uint8_t ** imageData);
+		int writeDestinationImageFile();
 		void releaseMemory();
 	public:
+		const int SUPPORTED_COLOR_DEPTH = 24;
+
 		const int ERROR_FILE_COULD_NOT_OPEN_FILE = 2;
 		const int ERROR_FILE_READING_INVALID_BMP_HEADER = 3;
 		const int ERROR_FILE_READING_UNSUPPORTED_COLOR_DEPTH = 4;
 		const int ERROR_FILE_READING_UNSUPPORTED_IMAGE_COMPRESSION = 5;
 
-		Compressor(CompressorArgs* args) : compressorArgs(args) {};
+		Compressor(CompressorArgs* args) : args(args) {};
 		int compress();
-	};
-
-	struct CompressorAlgorithmArgs {
-		int32_t sourceWidth;
-		int32_t sourceHeight;
-		uint8_t ** sourceImageData;
-		int32_t compressedDataSize;
-		void * compressedData;
-	};
-
-	// TODO only uses fixed color depth of 24 bits
-	class CompressorAlgorithm {
-	public:
-		virtual int compress(CompressorAlgorithmArgs* args) = 0;
 	};
 }
