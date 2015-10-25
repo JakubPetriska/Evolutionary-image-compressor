@@ -5,15 +5,10 @@
 
 namespace lossycompressor {
 
-	// TODO currently only supports voronoi diagram - add more represenations
-
 	struct Color24bit {
-		uint8_t r;
-		uint8_t g;
 		uint8_t b;
-
-		// TODO is this needed?
-		//Color24bit(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {};
+		uint8_t g;
+		uint8_t r;
 	};
 
 	/*
@@ -69,19 +64,30 @@ namespace lossycompressor {
 
 		// 2 dimensional array used to hold assignments of pixels to diagram points
 		int ** pixelPointAssignment;
+
+		int calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram, 
+			int pixelXCoord, int pixelYCoord);
 	protected:
 		CompressorAlgorithmArgs * args;
 
 		/*
 			Calculates average colors of all points in diagram into the colors array.
 		*/
-		void calculateColors(VoronoiDiagram * diagram, Color24bit * colors);
+		void calculateColors(VoronoiDiagram * diagram, 
+			Color24bit * colors, 
+			int ** pixelPointAssignment);
 
 		/*
 			Returns fitness of given diagram. Returned fitness is always
-			>= 0 with 0 meaning the best possible value.
+			>= 0 with 0 being the best possible value.
 		*/
 		float calculateFitness(VoronoiDiagram * diagram);
+
+		void generateRandomDiagram(VoronoiDiagram * output);
+
+		void swap(VoronoiDiagram ** first, VoronoiDiagram ** second);
+
+		void copy(VoronoiDiagram * source, VoronoiDiagram * destination);
 	public:
 		CompressorAlgorithm(CompressorAlgorithmArgs* args)
 			: args(args),
@@ -112,14 +118,24 @@ namespace lossycompressor {
 			delete[] pixelPointAssignment;
 		}
 
-		virtual int compress(VoronoiDiagram * outputDiagram, Color24bit * colors) = 0;
+		virtual int compress(VoronoiDiagram * outputDiagram, 
+			Color24bit * colors, 
+			int ** pixelPointAssignment) = 0;
 	};
 
 	class LocalSearch : public CompressorAlgorithm {
+		const float MAX_CALCULATION_TIME_SECONDS = 20 * 60;
 	public:
 		LocalSearch(CompressorAlgorithmArgs* args)
 			: CompressorAlgorithm(args) {};
 
-		virtual int compress(VoronoiDiagram * outputDiagram, Color24bit * colors) override;
+		virtual int compress(VoronoiDiagram * outputDiagram, 
+			Color24bit * colors,
+			int ** pixelPointAssignment) override;
+
+		/*
+			Copies source diagram into destination while tweaking it.
+		*/
+		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination);
 	};
 }

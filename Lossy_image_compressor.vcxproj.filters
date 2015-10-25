@@ -24,12 +24,18 @@
     <ClCompile Include="Compressor\compressoralgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Compressor\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Compressor\compressoralgorithms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compressor\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

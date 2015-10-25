@@ -16,11 +16,6 @@ int main(int argc, char* argv[]) {
 	compressorArgs.destinationImagePath = argv[3];
 	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
 
-	printf("%s\n", compressorArgs.sourceImagePath);
-	printf("%s\n", compressorArgs.destinationCompressedPath);
-	printf("%s\n", compressorArgs.destinationImagePath);
-	printf("%d\n", compressorArgs.maxCompressedSizeBytes);
-
 	Compressor compressor(&compressorArgs);
 	compressor.compress();
 }

@@ -30,12 +30,28 @@ int Compressor::compress() {
 
 	VoronoiDiagram compressedDiagram(compressorAlgorithmArgs.diagramPointsCount);
 	Color24bit * diagramColors = new Color24bit[compressorAlgorithmArgs.diagramPointsCount];
-	compressAlgorithm->compress(&compressedDiagram, diagramColors);
+	int ** pixelPointAssignment = new int*[sourceHeight];
+	for (int i = 0; i < sourceHeight; ++i) {
+		pixelPointAssignment[i] = new int[sourceWidth];
+	}
+
+	compressAlgorithm->compress(&compressedDiagram, diagramColors, pixelPointAssignment);
 	delete compressAlgorithm;
 	
 	// TODO write the compressed diagram into output file
 
-	// TODO augment the source bitmap data with the compressed diagram
+	for (int i = 0; i < sourceHeight; ++i) {
+		uint8_t * row = sourceImageData[i];
+		for (int j = 0; j < sourceWidth; ++j) {
+			int pointIndex = pixelPointAssignment[i][j];
+			Color24bit color = diagramColors[pointIndex];
+			int colorStartIndexInSourceData = j * 3;
+
+			row[colorStartIndexInSourceData] = color.b;
+			row[colorStartIndexInSourceData + 1] = color.g;
+			row[colorStartIndexInSourceData + 2] = color.r;
+		}
+	}
 
 	delete[] diagramColors;
 
@@ -111,7 +127,7 @@ int Compressor::readSourceImageFile() {
 	}
 
 	// Read the raw pixel data
-	rowWidthInBytes = sourceWidth * (sourceColorDepth / 8);
+	rowWidthInBytes = ((sourceColorDepth * sourceWidth + 31) / 32) * 4;
 	sourceImageData = new uint8_t*[sourceHeight];
 	for (int i = 0; i < sourceHeight; ++i) {
 		uint8_t * newRow = new uint8_t[rowWidthInBytes];
