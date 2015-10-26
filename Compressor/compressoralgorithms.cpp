@@ -3,25 +3,106 @@
 #include <cmath>
 #include <random>
 #include "utils.h"
+#include <assert.h>
 
 using namespace std;
 using namespace lossycompressor;
 
+int32_t VoronoiDiagram::x(int index) {
+	return diagramPointsXCoordinates[index];
+}
+
+int32_t VoronoiDiagram::y(int index) {
+	return diagramPointsYCoordinates[index];
+}
+
 int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
 	int pixelXCoord, int pixelYCoord) {
 
-	int closestPointIndex = -1;
-	float closestPointSquareDistance = -1;
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		float pointSquareDistance
-			= pow((float)diagram->diagramPointsXCoordinates[i] - pixelXCoord, 2)
-			+ pow((float)diagram->diagramPointsYCoordinates[i] - pixelYCoord, 2);
-		if (closestPointIndex == -1 || pointSquareDistance < closestPointSquareDistance) {
-			closestPointIndex = i;
-			closestPointSquareDistance = pointSquareDistance;
+	int startIndex = findClosestHorizontalPoint(diagram, pixelXCoord, pixelYCoord);
+	int currentClosestPointIndex = startIndex;
+	double squareDistanceToClosest = calculateSquareDistance(
+		diagram->x(currentClosestPointIndex), diagram->y(currentClosestPointIndex), 
+		pixelXCoord, pixelYCoord);
+	bool unacceptableLowerFound = false;
+	bool unacceptableHigherFound = false;
+
+	bool lower = false;
+	for (int i = 1; i <= args->diagramPointsCount; i = lower ? i : i + 1) {
+		if (unacceptableLowerFound && unacceptableHigherFound) {
+			break;
+		}
+		
+		lower = !lower;
+		if ((lower && unacceptableLowerFound)
+			|| (!lower && unacceptableHigherFound)) {
+			continue;
+		}
+
+		int currentIndex = lower ? startIndex - i : startIndex + i;
+		if (currentIndex < 0 || currentIndex >= args->diagramPointsCount) {
+			if (lower) {
+				unacceptableLowerFound = true;
+			}
+			else {
+				unacceptableHigherFound = true;
+			}
+			continue;
+		}
+
+		double squareDistanceToCurrent = calculateSquareDistance(
+			diagram->x(currentIndex), diagram->y(currentIndex),
+			pixelXCoord, pixelYCoord);
+
+		if (squareDistanceToCurrent < squareDistanceToClosest) {
+			currentClosestPointIndex = currentIndex;
+			squareDistanceToClosest = squareDistanceToCurrent;
+			unacceptableLowerFound = false;
+			unacceptableHigherFound = false;
+		}
+		else if (lower && !unacceptableLowerFound && diagram->x(currentIndex) < pixelXCoord
+			&& pow(diagram->x(currentIndex) - pixelXCoord, 2) > squareDistanceToClosest) {
+			unacceptableLowerFound = true;
+		}
+		else if (!lower && !unacceptableHigherFound && diagram->x(currentIndex) > pixelXCoord
+			&& pow(diagram->x(currentIndex) - pixelXCoord, 2) > squareDistanceToClosest) {
+			unacceptableHigherFound = true;
 		}
 	}
-	return closestPointIndex;
+
+	return currentClosestPointIndex;
+}
+
+int CompressorAlgorithm::findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY) {
+	if (args->diagramPointsCount == 1) {
+		return 0;
+	}
+
+	int start = 0, end = args->diagramPointsCount;
+	while (start < end - 2) {
+		int pivotIndex = (start + end) / 2;
+		int pixelPivotComparison = compare(pixelX, pixelY, diagram->x(pivotIndex), diagram->y(pivotIndex));
+		if (pixelPivotComparison == 0) {
+			return pivotIndex;
+		}
+		else if (pixelPivotComparison < 0) {
+			end = pivotIndex + 1;
+		}
+		else {
+			start = pivotIndex;
+		}
+	}
+
+	assert(start == end - 2);
+
+	double startPixelSquareDist = calculateSquareDistance(pixelX, pixelY, diagram->x(start), diagram->y(start));
+	double endPixelSquareDist = calculateSquareDistance(pixelX, pixelY, diagram->x(end), diagram->y(end));
+	if (startPixelSquareDist < endPixelSquareDist) {
+		return start;
+	}
+	else {
+		return end;
+	}
 }
 
 void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
@@ -36,10 +117,12 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 		bSums[i] = 0;
 		bCounts[i] = 0;
 	}
+
 	for (int i = 0; i < args->sourceHeight; ++i) {
 		uint8_t * row = args->sourceImageData[i];
 		for (int j = 0; j < args->sourceWidth; ++j) {
 			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
+			assert(pointIndex >= 0);
 			pixelPointAssignment[i][j] = pointIndex;
 
 			int colorStartIndexInSourceData = j * 3;
@@ -51,6 +134,7 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 			rCounts[pointIndex] += 1;
 		}
 	}
+
 	for (int i = 0; i < args->diagramPointsCount; ++i) {
 		Color24bit * color = &colors[i];
 		color->b = (uint8_t)(bSums[i] / bCounts[i] + 0.5);
@@ -86,7 +170,7 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
 
 	Utils::getCurrentMillis(&endTime);
 	double calculationTotalTime = (endTime - startTime) / 1000.0;
-	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
+	printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
 	return fitness;
 }
 
@@ -98,6 +182,37 @@ void CompressorAlgorithm::generateRandomDiagram(VoronoiDiagram * output) {
 	for (int i = 0; i < args->diagramPointsCount; ++i) {
 		output->diagramPointsXCoordinates[i] = (int32_t)(rd() * widthMultiplier + 0.5f);
 		output->diagramPointsYCoordinates[i] = (int32_t)(rd() * heightMultiplier + 0.5f);
+	}
+
+	quicksortDiagramPoints(output);
+}
+
+double CompressorAlgorithm::calculateSquareDistance(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
+	return pow(firstX - secondX, 2) + pow(firstY - secondY, 2);
+}
+
+void CompressorAlgorithm::quicksortDiagramPoints(
+	VoronoiDiagram * diagram, int start, int end) {
+
+	if (end == -1) {
+		end = args->diagramPointsCount;
+	}
+
+	if (start < end - 1) {
+		int pivotIndex = end - 1;
+		int upperHalfStart = start;
+		for (int i = start; i < pivotIndex; ++i) {
+			if (compare(diagram, i, pivotIndex) == -1) {
+				Utils::swap(diagram->diagramPointsXCoordinates, i, upperHalfStart);
+				Utils::swap(diagram->diagramPointsYCoordinates, i, upperHalfStart);
+				++upperHalfStart;
+			}
+		}
+		Utils::swap(diagram->diagramPointsXCoordinates, pivotIndex, upperHalfStart);
+		Utils::swap(diagram->diagramPointsYCoordinates, pivotIndex, upperHalfStart);
+
+		quicksortDiagramPoints(diagram, start, upperHalfStart);
+		quicksortDiagramPoints(diagram, upperHalfStart + 1, end);
 	}
 }
 
@@ -114,10 +229,28 @@ void CompressorAlgorithm::copy(VoronoiDiagram * source, VoronoiDiagram * destina
 	}
 }
 
-void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
-	// TODO do this adaptive
+int CompressorAlgorithm::compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex) {
+	return compare(diagram->x(firstPointIndex), diagram->y(firstPointIndex),
+		diagram->x(secondPointIndex), diagram->y(secondPointIndex));
+}
 
-	float movementPerc = 0.1f;
+int CompressorAlgorithm::compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
+	if (firstX == secondX && firstY == secondY) {
+		return 0;
+	}
+	else if (firstX < secondX
+		|| (firstX == secondX && firstY < secondY)) {
+		return -1;
+	}
+	else {
+		return 1;
+	}
+}
+
+void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
+	// TODO do this adaptive, also bit mor reasonable
+
+	float movementPerc = 0.3f;
 
 	random_device rd;
 	int pointToTweakIndex = (int)(rd() * (((float)(args->diagramPointsCount - 1)) / rd.max()) + 0.5f);
@@ -126,15 +259,32 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
 	float horizontalMovementMultiplier = ((float)args->sourceWidth) / halfRdMax;
 	float verticalMovementMultiplier = ((float)args->sourceHeight) / halfRdMax;
 
+	int32_t xDelta = (int32_t)((rd() - halfRdMax) * horizontalMovementMultiplier * movementPerc);
+	int32_t yDelta = (int32_t)((rd() - halfRdMax) * verticalMovementMultiplier * movementPerc);
+
 	for (int i = 0; i < args->diagramPointsCount; ++i) {
 		destination->diagramPointsXCoordinates[i] = source->diagramPointsXCoordinates[i];
 		destination->diagramPointsYCoordinates[i] = source->diagramPointsYCoordinates[i];
 		if (i == pointToTweakIndex) {
-			destination->diagramPointsXCoordinates[i] 
-				+= (int32_t)((rd() - halfRdMax) * horizontalMovementMultiplier * movementPerc);
+			destination->diagramPointsXCoordinates[i] += xDelta;
+			destination->diagramPointsYCoordinates[i] += yDelta;
+		}
+	}
 
-			destination->diagramPointsYCoordinates[i] 
-				+= (int32_t)((rd() - halfRdMax) * verticalMovementMultiplier * movementPerc);
+	// Maintain the sorted order of diagram points
+	int currentIndex = pointToTweakIndex;
+	if (xDelta > 0 || (xDelta == 0 && yDelta > 0)) {
+		while (currentIndex < args->diagramPointsCount - 1 && compare(destination, currentIndex, currentIndex + 1) == 1) {
+			Utils::swap(destination->diagramPointsXCoordinates, currentIndex, currentIndex + 1);
+			Utils::swap(destination->diagramPointsYCoordinates, currentIndex, currentIndex + 1);
+			++currentIndex;
+		}
+	}
+	else if (xDelta < 0 || (xDelta == 0 && yDelta < 0)) {
+		while (currentIndex > 0 && compare(destination, currentIndex - 1, currentIndex) == 1) {
+			Utils::swap(destination->diagramPointsXCoordinates, currentIndex, currentIndex - 1);
+			Utils::swap(destination->diagramPointsYCoordinates, currentIndex, currentIndex - 1);
+			--currentIndex;
 		}
 	}
 }
@@ -159,6 +309,16 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	generateRandomDiagram(current);
 	currentFitness = calculateFitness(current);
 
+	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
+	for (int i = 0; i < 15; ++i) {
+		generateRandomDiagram(next);
+		nextFitness = calculateFitness(next);
+		if (nextFitness < currentFitness) {
+			swap(&current, &next);
+			currentFitness = nextFitness;
+		}
+	}
+
 	copy(current, best);
 	bestFitness = currentFitness;
 
@@ -174,7 +334,7 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 		}
 
 		Utils::getCurrentMillis(&currentTime);
-		float calculationTimeSecs = (currentTime - startTime) / 1000.0;
+		double calculationTimeSecs = (currentTime - startTime) / 1000.0;
 		if (calculationTimeSecs >= MAX_CALCULATION_TIME_SECONDS) {
 			printf("Ending after %.4f seconds of calculation\n", calculationTimeSecs);
 			break;

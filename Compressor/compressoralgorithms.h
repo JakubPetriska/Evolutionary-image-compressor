@@ -32,6 +32,9 @@ namespace lossycompressor {
 			delete[] diagramPointsXCoordinates;
 			delete[] diagramPointsYCoordinates;
 		}
+
+		int32_t x(int index);
+		int32_t y(int index);
 	};
 
 	struct CompressorAlgorithmArgs {
@@ -46,6 +49,12 @@ namespace lossycompressor {
 
 		Implementations use local search or various genetic algorithms.
 		Therefore this class contains useful methods used in these implementations.
+
+		Points in voronoi diagrams used during calculations are kept sorted
+		according to their horizontal (x) coordinate. This sorting speeds
+		up fitness calculation. Points are initially
+		sorted when diagram is generated and during tweaking only the changed
+		point(s) is/are put to their right place.
 
 		BEWARE these utility methods use work variables from the instance of this class
 		and hence cannot be executed in parallel.
@@ -88,6 +97,21 @@ namespace lossycompressor {
 		void swap(VoronoiDiagram ** first, VoronoiDiagram ** second);
 
 		void copy(VoronoiDiagram * source, VoronoiDiagram * destination);
+
+		int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
+
+		int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
+
+		double calculateSquareDistance(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
+
+		void quicksortDiagramPoints(VoronoiDiagram * diagram, int start = 0, int end = -1);
+
+		/*
+			Does binary search for closet value in the sorted diagram points.
+
+			Returns index of such point.
+		*/
+		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY);
 	public:
 		CompressorAlgorithm(CompressorAlgorithmArgs* args)
 			: args(args),
@@ -123,8 +147,11 @@ namespace lossycompressor {
 			int ** pixelPointAssignment) = 0;
 	};
 
+	/*
+		Algorithm uses hill-climbing to come up with best position of diagram points.
+	*/
 	class LocalSearch : public CompressorAlgorithm {
-		const float MAX_CALCULATION_TIME_SECONDS = 20 * 60;
+		const double MAX_CALCULATION_TIME_SECONDS = 15 * 60;
 	public:
 		LocalSearch(CompressorAlgorithmArgs* args)
 			: CompressorAlgorithm(args) {};
