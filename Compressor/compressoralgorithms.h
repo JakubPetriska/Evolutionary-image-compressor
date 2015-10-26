@@ -68,6 +68,10 @@ namespace lossycompressor {
 		float * bSums;
 		int * bCounts;
 
+		// Used during calculation of fitness - estimating best point to tweak
+		float * deviationSumPerPoint;
+		int * pixelCountPerPoint;
+
 		// Array used to store assignment of color to diagram points
 		Color24bit * colorsTmp;
 
@@ -90,7 +94,7 @@ namespace lossycompressor {
 			Returns fitness of given diagram. Returned fitness is always
 			>= 0 with 0 being the best possible value.
 		*/
-		float calculateFitness(VoronoiDiagram * diagram);
+		float calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
 
 		void generateRandomDiagram(VoronoiDiagram * output);
 
@@ -121,6 +125,8 @@ namespace lossycompressor {
 			gCounts(new int[args->diagramPointsCount]),
 			bSums(new float[args->diagramPointsCount]),
 			bCounts(new int[args->diagramPointsCount]),
+			deviationSumPerPoint(new float[args->diagramPointsCount]),
+			pixelCountPerPoint(new int[args->diagramPointsCount]),
 			colorsTmp(new Color24bit[args->diagramPointsCount]),
 			pixelPointAssignment(new int*[args->sourceHeight]) 
 		{
@@ -135,6 +141,8 @@ namespace lossycompressor {
 			delete[] gCounts;
 			delete[] bSums;
 			delete[] bCounts;
+			delete[] deviationSumPerPoint;
+			delete[] pixelCountPerPoint;
 			delete[] colorsTmp;
 			for (int i = 0; i < args->sourceHeight; ++i) {
 				delete[] pixelPointAssignment[i];
@@ -151,7 +159,8 @@ namespace lossycompressor {
 		Algorithm uses hill-climbing to come up with best position of diagram points.
 	*/
 	class LocalSearch : public CompressorAlgorithm {
-		const double MAX_CALCULATION_TIME_SECONDS = 15 * 60;
+		const double MAX_CALCULATION_TIME_SECONDS = 20 * 60;
+		const int MAX_POINT_TO_TWEAK_TRIAL_COUNT = 10;
 	public:
 		LocalSearch(CompressorAlgorithmArgs* args)
 			: CompressorAlgorithm(args) {};
@@ -163,6 +172,6 @@ namespace lossycompressor {
 		/*
 			Copies source diagram into destination while tweaking it.
 		*/
-		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination);
+		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination, int pointToTweak = -1);
 	};
 }

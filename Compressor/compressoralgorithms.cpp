@@ -144,12 +144,19 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 }
 
 // TODO is this way of calculation of fitness ok? Maybe simmulated annealing should benefit from something else.
-float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
+float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
 	__int64 startTime, endTime;
 	Utils::getCurrentMillis(&startTime);
 
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
 	float fitness = 0;
+
+	if (worstDeviationPerPixelPointIndex != NULL) {
+		for (int i = 0; i < args->diagramPointsCount; ++i) {
+			deviationSumPerPoint[i] = 0;
+			pixelCountPerPoint[i] = 0;
+		}
+	}
 
 	for (int i = 0; i < args->sourceHeight; ++i) {
 		uint8_t * row = args->sourceImageData[i];
@@ -165,7 +172,26 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
 				/ 255.0f;
 
 			fitness += pixelDeviation;
+
+			if (worstDeviationPerPixelPointIndex != NULL) {
+				deviationSumPerPoint[pointIndex] += pixelDeviation;
+				pixelCountPerPoint[pointIndex] += 1;
+			}
 		}
+	}
+
+	if (worstDeviationPerPixelPointIndex != NULL) {
+		float minDeviationPerPixel;
+		float currentMinDeviationPerPixelPointIndex = -1;
+		for (int i = 0; i < args->diagramPointsCount; ++i) {
+			float deviationPerPixel = deviationSumPerPoint[i] / pixelCountPerPoint[i];
+			if (currentMinDeviationPerPixelPointIndex == -1 
+				|| deviationPerPixel < minDeviationPerPixel) {
+				minDeviationPerPixel = deviationPerPixel;
+				currentMinDeviationPerPixelPointIndex = i;
+			}
+		}
+		*worstDeviationPerPixelPointIndex = currentMinDeviationPerPixelPointIndex;
 	}
 
 	Utils::getCurrentMillis(&endTime);
@@ -247,13 +273,15 @@ int CompressorAlgorithm::compare(int32_t firstX, int32_t firstY, int32_t secondX
 	}
 }
 
-void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
+void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination, int pointToTweak) {
 	// TODO do this adaptive, also bit mor reasonable
 
 	float movementPerc = 0.3f;
 
 	random_device rd;
-	int pointToTweakIndex = (int)(rd() * (((float)(args->diagramPointsCount - 1)) / rd.max()) + 0.5f);
+	if (pointToTweak == -1) {
+		pointToTweak = (int)(rd() * (((float)(args->diagramPointsCount - 1)) / rd.max()) + 0.5f);
+	}
 
 	float halfRdMax = rd.max() / 2;
 	float horizontalMovementMultiplier = ((float)args->sourceWidth) / halfRdMax;
@@ -265,14 +293,14 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
 	for (int i = 0; i < args->diagramPointsCount; ++i) {
 		destination->diagramPointsXCoordinates[i] = source->diagramPointsXCoordinates[i];
 		destination->diagramPointsYCoordinates[i] = source->diagramPointsYCoordinates[i];
-		if (i == pointToTweakIndex) {
+		if (i == pointToTweak) {
 			destination->diagramPointsXCoordinates[i] += xDelta;
 			destination->diagramPointsYCoordinates[i] += yDelta;
 		}
 	}
 
 	// Maintain the sorted order of diagram points
-	int currentIndex = pointToTweakIndex;
+	int currentIndex = pointToTweak;
 	if (xDelta > 0 || (xDelta == 0 && yDelta > 0)) {
 		while (currentIndex < args->diagramPointsCount - 1 && compare(destination, currentIndex, currentIndex + 1) == 1) {
 			Utils::swap(destination->diagramPointsXCoordinates, currentIndex, currentIndex + 1);
@@ -305,17 +333,22 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	VoronoiDiagram * next = new VoronoiDiagram(args->diagramPointsCount);
 	float nextFitness = -1;
 
+	int pointTweakTrialCount = 0;
+	int pointToTweak = 0;
+	int nextPointToTweak = 0;
+
 	// Generate random diagram as our starting position
 	generateRandomDiagram(current);
-	currentFitness = calculateFitness(current);
+	currentFitness = calculateFitness(current, &pointToTweak);
 
 	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
 	for (int i = 0; i < 15; ++i) {
 		generateRandomDiagram(next);
-		nextFitness = calculateFitness(next);
+		nextFitness = calculateFitness(next, &nextPointToTweak);
 		if (nextFitness < currentFitness) {
 			swap(&current, &next);
 			currentFitness = nextFitness;
+			pointToTweak = nextPointToTweak;
 		}
 	}
 
@@ -323,14 +356,19 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	bestFitness = currentFitness;
 
 	while (true) {
-		tweak(current, next);
-		nextFitness = calculateFitness(next);
+		tweak(current, next, pointTweakTrialCount < MAX_POINT_TO_TWEAK_TRIAL_COUNT ? pointToTweak : -1);
+		nextFitness = calculateFitness(next, &nextPointToTweak);
 
 		if (nextFitness < currentFitness) { // TODO maybe do simulated annealing
 			swap(&current, &next);
 			currentFitness = nextFitness;
+			pointToTweak = nextPointToTweak;
+			pointTweakTrialCount = 0;
 
 			printf("Found better solution with fitness %f\n", currentFitness);
+		}
+		else {
+			++pointTweakTrialCount;
 		}
 
 		Utils::getCurrentMillis(&currentTime);
