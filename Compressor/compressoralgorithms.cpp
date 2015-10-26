@@ -323,10 +323,6 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	__int64 startTime, currentTime;
 	Utils::getCurrentMillis(&startTime);
 
-	// We'll keep our best result so far in this diagram
-	VoronoiDiagram * best = new VoronoiDiagram(args->diagramPointsCount);
-	float bestFitness = -1;
-
 	VoronoiDiagram * current = new VoronoiDiagram(args->diagramPointsCount);
 	float currentFitness = -1;
 
@@ -352,9 +348,6 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 		}
 	}
 
-	copy(current, best);
-	bestFitness = currentFitness;
-
 	while (true) {
 		tweak(current, next, pointTweakTrialCount < MAX_POINT_TO_TWEAK_TRIAL_COUNT ? pointToTweak : -1);
 		nextFitness = calculateFitness(next, &nextPointToTweak);
@@ -379,15 +372,11 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 		}
 	}
 
-	// TODO delete this when we start to keep the best
-	copy(current, best);
-	bestFitness = currentFitness;
 
-
-	printf("Found best solution with fitness %f\n", bestFitness);
+	printf("Found best solution with fitness %f\n", currentFitness);
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
-	copy(best, outputDiagram);
+	copy(current, outputDiagram);
 	calculateColors(outputDiagram, colors, pixelPointAssignment);
 	return 0;
 }
