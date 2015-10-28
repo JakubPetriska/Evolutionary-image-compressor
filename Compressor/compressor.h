@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include "compressoralgorithms.h"
 
 /*
 	Class compressing image files on given paths into voronoi diagram.
@@ -16,7 +17,7 @@
 		Rest of the file contains diagram points in following format:
 			4 bytes - point x coordinate
 			4 bytes - point y coordinate
-			24 bytes - point color
+			3 bytes - point color
 */
 
 namespace lossycompressor {
@@ -57,6 +58,7 @@ namespace lossycompressor {
 
 		int readSourceImageFile();
 		int writeDestinationImageFile();
+		int writeCompressedFile(VoronoiDiagram * diagram, Color24bit * colors);
 		void releaseMemory();
 	public:
 		const int SUPPORTED_COLOR_DEPTH = 24;
@@ -66,7 +68,7 @@ namespace lossycompressor {
 		const int ERROR_FILE_READING_UNSUPPORTED_COLOR_DEPTH = 4;
 		const int ERROR_FILE_READING_UNSUPPORTED_IMAGE_COMPRESSION = 5;
 
-		Compressor(CompressorArgs* args) : args(args) {};
+		Compressor(CompressorArgs * args) : args(args) {};
 		int compress();
 	};
 }

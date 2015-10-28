@@ -38,8 +38,14 @@ int Compressor::compress() {
 	compressAlgorithm->compress(&compressedDiagram, diagramColors, pixelPointAssignment);
 	delete compressAlgorithm;
 	
-	// TODO write the compressed diagram into output file
+	err = writeCompressedFile(&compressedDiagram, diagramColors);
+	if (err != 0) {
+		releaseMemory();
+		printf("Encountered error during compressed output file writing with code %d\n", err);
+		return err;
+	}
 
+	// Fill the colors of compressed image into the output data (data that we read as input)
 	for (int i = 0; i < sourceHeight; ++i) {
 		uint8_t * row = sourceImageData[i];
 		for (int j = 0; j < sourceWidth; ++j) {
@@ -167,6 +173,40 @@ int Compressor::writeDestinationImageFile() {
 	
 	if (sourceImageFileRestSize > 0) {
 		fwrite(sourceImageFileRest, 1, sourceImageFileRestSize, file);
+	}
+
+	fflush(file);
+	fclose(file);
+	return 0;
+}
+
+int Compressor::writeCompressedFile(VoronoiDiagram * diagram, Color24bit * colors) {
+	FILE* file;
+	errno_t err = fopen_s(
+		&file,
+		args->destinationCompressedPath,
+		"wb");
+	if (err != 0 || file == NULL) {
+		return ERROR_FILE_COULD_NOT_OPEN_FILE;
+	}
+
+	// TODO file is smaller than should be
+	int8_t * outputData = new int8_t[14];
+	((int32_t *)outputData)[0] = sourceWidth;
+	((int32_t *)outputData)[1] = sourceHeight;
+	((int16_t *)outputData)[4] = 24;
+	((int32_t *)&(outputData[10]))[0] = diagram->diagramPointsCount;
+
+	fwrite(outputData, 1, 14, file);
+	
+	for (int i = 0; i < diagram->diagramPointsCount; ++i) {
+		((int32_t *)outputData)[0] = diagram->x(i);
+		((int32_t *)outputData)[1] = diagram->y(i);
+		((uint8_t *)outputData)[8] = colors[i].b;
+		((uint8_t *)outputData)[9] = colors[i].g;
+		((uint8_t *)outputData)[10] = colors[i].r;
+
+		fwrite(outputData, 1, 11, file);
 	}
 
 	fflush(file);

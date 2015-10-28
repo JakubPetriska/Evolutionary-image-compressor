@@ -159,7 +159,7 @@ namespace lossycompressor {
 		Algorithm uses hill-climbing to come up with best position of diagram points.
 	*/
 	class LocalSearch : public CompressorAlgorithm {
-		const double MAX_CALCULATION_TIME_SECONDS = 0.5 * 60;
+		const double MAX_CALCULATION_TIME_SECONDS = 0.05 * 60;
 		const int MAX_POINT_TO_TWEAK_TRIAL_COUNT = 10;
 	public:
 		LocalSearch(CompressorAlgorithmArgs* args)
