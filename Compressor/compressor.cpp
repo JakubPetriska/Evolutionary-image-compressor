@@ -23,7 +23,7 @@ int Compressor::compress() {
 	
 	// Calculate how many points compressed file can contain
 	int compressedFileDataStorageSize = args->maxCompressedSizeBytes - COMPRESSED_FILE_HEADER_SIZE;
-	int dataPointSize = COMPRESSED_FILE_POINT_POSITION_SIZE + SUPPORTED_COLOR_DEPTH;
+	int dataPointSize = COMPRESSED_FILE_POINT_POSITION_SIZE + (SUPPORTED_COLOR_DEPTH / 8);
 	compressorAlgorithmArgs.diagramPointsCount = compressedFileDataStorageSize / dataPointSize;
 
 	compressAlgorithm = new LocalSearch(&compressorAlgorithmArgs);
