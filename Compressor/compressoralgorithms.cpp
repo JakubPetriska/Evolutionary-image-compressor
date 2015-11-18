@@ -143,7 +143,6 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 	}
 }
 
-// TODO is this way of calculation of fitness ok? Maybe simmulated annealing should benefit from something else.
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
 	__int64 startTime, endTime;
 	Utils::getCurrentMillis(&startTime);
@@ -352,7 +351,7 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 		tweak(current, next, pointTweakTrialCount < MAX_POINT_TO_TWEAK_TRIAL_COUNT ? pointToTweak : -1);
 		nextFitness = calculateFitness(next, &nextPointToTweak);
 
-		if (nextFitness < currentFitness) { // TODO maybe do simulated annealing
+		if (nextFitness < currentFitness) {
 			swap(&current, &next);
 			currentFitness = nextFitness;
 			pointToTweak = nextPointToTweak;
