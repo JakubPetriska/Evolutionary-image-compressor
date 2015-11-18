@@ -22,6 +22,7 @@
     <ProjectGuid>{164E3380-A495-433B-BBEE-AD067370D713}</ProjectGuid>
     <RootNamespace>Lossy_image_compressor</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Compressor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
