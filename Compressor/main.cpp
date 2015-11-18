@@ -6,7 +6,7 @@ using namespace lossycompressor;
 
 int main(int argc, char* argv[]) {
 	if (argc < 4) {
-		printf("Usage: source_image_file_path compressed_file_path compressed_image_file_path max_size_in_bytes");
+		printf("Usage: source_image_file_path compressed_file_path compressed_image_file_path max_size_in_bytes\n");
 		return 1;
 	}
 

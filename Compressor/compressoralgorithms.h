@@ -106,8 +106,6 @@ namespace lossycompressor {
 
 		int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
 
-		double calculateSquareDistance(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
-
 		void quicksortDiagramPoints(VoronoiDiagram * diagram, int start = 0, int end = -1);
 
 		/*

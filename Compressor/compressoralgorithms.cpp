@@ -21,7 +21,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 
 	int startIndex = findClosestHorizontalPoint(diagram, pixelXCoord, pixelYCoord);
 	int currentClosestPointIndex = startIndex;
-	double squareDistanceToClosest = calculateSquareDistance(
+	double squareDistanceToClosest = Utils::calculateSquareDistance(
 		diagram->x(currentClosestPointIndex), diagram->y(currentClosestPointIndex), 
 		pixelXCoord, pixelYCoord);
 	bool unacceptableLowerFound = false;
@@ -50,7 +50,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 			continue;
 		}
 
-		double squareDistanceToCurrent = calculateSquareDistance(
+		double squareDistanceToCurrent = Utils::calculateSquareDistance(
 			diagram->x(currentIndex), diagram->y(currentIndex),
 			pixelXCoord, pixelYCoord);
 
@@ -95,8 +95,8 @@ int CompressorAlgorithm::findClosestHorizontalPoint(VoronoiDiagram * diagram, in
 
 	assert(start == end - 2);
 
-	double startPixelSquareDist = calculateSquareDistance(pixelX, pixelY, diagram->x(start), diagram->y(start));
-	double endPixelSquareDist = calculateSquareDistance(pixelX, pixelY, diagram->x(end), diagram->y(end));
+	double startPixelSquareDist = Utils::calculateSquareDistance(pixelX, pixelY, diagram->x(start), diagram->y(start));
+	double endPixelSquareDist = Utils::calculateSquareDistance(pixelX, pixelY, diagram->x(end), diagram->y(end));
 	if (startPixelSquareDist < endPixelSquareDist) {
 		return start;
 	}
@@ -144,8 +144,8 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 }
 
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
-	__int64 startTime, endTime;
-	Utils::getCurrentMillis(&startTime);
+	LARGE_INTEGER startTime, endTime;
+	Utils::recordTime(&startTime);
 
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
 	float fitness = 0;
@@ -193,8 +193,8 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * wors
 		*worstDeviationPerPixelPointIndex = currentMinDeviationPerPixelPointIndex;
 	}
 
-	Utils::getCurrentMillis(&endTime);
-	double calculationTotalTime = (endTime - startTime) / 1000.0;
+	Utils::recordTime(&endTime);
+	double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
 	printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
 	return fitness;
 }
@@ -210,10 +210,6 @@ void CompressorAlgorithm::generateRandomDiagram(VoronoiDiagram * output) {
 	}
 
 	quicksortDiagramPoints(output);
-}
-
-double CompressorAlgorithm::calculateSquareDistance(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
-	return pow(firstX - secondX, 2) + pow(firstY - secondY, 2);
 }
 
 void CompressorAlgorithm::quicksortDiagramPoints(
@@ -319,8 +315,8 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination, i
 int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	Color24bit * colors, int ** pixelPointAssignment) {
 
-	__int64 startTime, currentTime;
-	Utils::getCurrentMillis(&startTime);
+	LARGE_INTEGER startTime, currentTime;
+	Utils::recordTime(&startTime);
 
 	VoronoiDiagram * current = new VoronoiDiagram(args->diagramPointsCount);
 	float currentFitness = -1;
@@ -363,8 +359,8 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 			++pointTweakTrialCount;
 		}
 
-		Utils::getCurrentMillis(&currentTime);
-		double calculationTimeSecs = (currentTime - startTime) / 1000.0;
+		Utils::recordTime(&currentTime);
+		double calculationTimeSecs = Utils::calculateInterval(&startTime, &currentTime);
 		if (calculationTimeSecs >= MAX_CALCULATION_TIME_SECONDS) {
 			printf("Ending after %.4f seconds of calculation\n", calculationTimeSecs);
 			break;
