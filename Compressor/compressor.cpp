@@ -1,5 +1,6 @@
 #include "compressor.h"
-#include "compressoralgorithms.h"
+#include "localsearch.h"
+#include "evolutionaryalgorithm.h"
 #include <cstdio>
 
 using namespace lossycompressor;
@@ -20,13 +21,19 @@ int Compressor::compress() {
 	compressorAlgorithmArgs.sourceWidth = sourceWidth;
 	compressorAlgorithmArgs.sourceHeight = sourceHeight;
 	compressorAlgorithmArgs.sourceImageData = sourceImageData;
+	compressorAlgorithmArgs.maxComputationTimeSecs = args->maxComputationTimeSecs;
 	
 	// Calculate how many points compressed file can contain
 	int compressedFileDataStorageSize = args->maxCompressedSizeBytes - COMPRESSED_FILE_HEADER_SIZE;
 	int dataPointSize = COMPRESSED_FILE_POINT_POSITION_SIZE + (SUPPORTED_COLOR_DEPTH / 8);
 	compressorAlgorithmArgs.diagramPointsCount = compressedFileDataStorageSize / dataPointSize;
 
-	compressAlgorithm = new LocalSearch(&compressorAlgorithmArgs);
+	if (args->computationType == ComputationType::EVOLUTIONARY) {
+		compressAlgorithm = new EvolutionaryAlgorithm(&compressorAlgorithmArgs);
+	}
+	else {
+		compressAlgorithm = new LocalSearch(&compressorAlgorithmArgs);
+	}
 
 	VoronoiDiagram compressedDiagram(compressorAlgorithmArgs.diagramPointsCount);
 	Color24bit * diagramColors = new Color24bit[compressorAlgorithmArgs.diagramPointsCount];
@@ -69,7 +76,7 @@ int Compressor::compress() {
 	}
 
 	releaseMemory();
-	return err;
+	return 0;
 }
 
 void Compressor::releaseMemory() {

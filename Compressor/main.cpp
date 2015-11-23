@@ -15,7 +15,8 @@ int main(int argc, char* argv[]) {
 	compressorArgs.destinationCompressedPath = argv[2];
 	compressorArgs.destinationImagePath = argv[3];
 	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
+	compressorArgs.computationType = ComputationType::EVOLUTIONARY;
 
 	Compressor compressor(&compressorArgs);
-	compressor.compress();
+	return compressor.compress();
 }

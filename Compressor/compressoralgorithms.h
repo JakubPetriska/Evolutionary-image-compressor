@@ -3,6 +3,9 @@
 #include <cstdint>
 #include <memory>
 
+#define NOMINMAX
+#include "Windows.h"
+
 namespace lossycompressor {
 
 	struct Color24bit {
@@ -42,6 +45,7 @@ namespace lossycompressor {
 		int32_t sourceHeight;
 		uint8_t ** sourceImageData;
 		int diagramPointsCount;
+		double maxComputationTimeSecs;
 	};
 
 	/*
@@ -80,6 +84,8 @@ namespace lossycompressor {
 
 		int calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram, 
 			int pixelXCoord, int pixelYCoord);
+
+		LARGE_INTEGER computationStartTime;
 	protected:
 		CompressorAlgorithmArgs * args;
 
@@ -114,6 +120,12 @@ namespace lossycompressor {
 			Returns index of such point.
 		*/
 		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY);
+
+		void startComputationTimer();
+
+		double currentComputationTime();
+
+		bool canContinueComputing();
 	public:
 		CompressorAlgorithm(CompressorAlgorithmArgs* args)
 			: args(args),
@@ -151,25 +163,5 @@ namespace lossycompressor {
 		virtual int compress(VoronoiDiagram * outputDiagram, 
 			Color24bit * colors, 
 			int ** pixelPointAssignment) = 0;
-	};
-
-	/*
-		Algorithm uses hill-climbing to come up with best position of diagram points.
-	*/
-	class LocalSearch : public CompressorAlgorithm {
-		const double MAX_CALCULATION_TIME_SECONDS = 0.05 * 60;
-		const int MAX_POINT_TO_TWEAK_TRIAL_COUNT = 10;
-	public:
-		LocalSearch(CompressorAlgorithmArgs* args)
-			: CompressorAlgorithm(args) {};
-
-		virtual int compress(VoronoiDiagram * outputDiagram, 
-			Color24bit * colors,
-			int ** pixelPointAssignment) override;
-
-		/*
-			Copies source diagram into destination while tweaking it.
-		*/
-		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination, int pointToTweak = -1);
 	};
 }
