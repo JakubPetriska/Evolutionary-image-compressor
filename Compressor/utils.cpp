@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <cmath>
+#include <random>
 
+using namespace std;
 using namespace lossycompressor;
 
 void Utils::swap(int32_t * arr, int firstIndex, int secondIndex) {
@@ -30,4 +32,11 @@ double Utils::calculateInterval(LARGE_INTEGER * start, LARGE_INTEGER * end) {
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency(&frequency);
 	return static_cast<double>(end->QuadPart - start->QuadPart) / frequency.QuadPart;
+}
+
+int Utils::generateRandom(int max) {
+	random_device rd;
+	double m = max / (double)(rd.max() - rd.min());
+	unsigned int randVal = rd();
+	return (int) ((randVal - rd.min()) * m);
 }

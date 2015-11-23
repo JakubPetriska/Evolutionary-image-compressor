@@ -15,5 +15,6 @@ namespace lossycompressor {
 
 		static void recordTime(LARGE_INTEGER * event);
 		static double calculateInterval(LARGE_INTEGER * start, LARGE_INTEGER * end);
+		static int generateRandom(int max);
 	};
 }

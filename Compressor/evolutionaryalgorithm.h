@@ -8,6 +8,16 @@ namespace lossycompressor {
 	*/
 	class EvolutionaryAlgorithm : public LocalSearch {
 		const int POPULATION_SIZE = 10;
+
+		// Percentage of population that is removed by selection
+		const float SELECTION_RATE = 0.5f;
+		// Percentage of individuals filled into population by crossover instead of mutation
+		const float CROSSOVER_RATE = 0.5f;
+	protected:
+		void crossover(VoronoiDiagram * firstParent, 
+			VoronoiDiagram * secondParent,
+			VoronoiDiagram * firstChild,
+			VoronoiDiagram * secondChild);
 	public:
 		EvolutionaryAlgorithm(CompressorAlgorithmArgs* args)
 			: LocalSearch(args) {};

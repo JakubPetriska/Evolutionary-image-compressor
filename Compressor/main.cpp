@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "compressor.h"
+#include <random>
 
 using namespace std;
 using namespace lossycompressor;
@@ -16,6 +17,7 @@ int main(int argc, char* argv[]) {
 	compressorArgs.destinationImagePath = argv[3];
 	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
 	compressorArgs.computationType = ComputationType::EVOLUTIONARY;
+	compressorArgs.maxComputationTimeSecs = 30;
 
 	Compressor compressor(&compressorArgs);
 	return compressor.compress();
