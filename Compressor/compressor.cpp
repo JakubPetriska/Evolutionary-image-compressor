@@ -23,6 +23,7 @@ int Compressor::compress() {
 	compressorAlgorithmArgs.limitByTime = args->computationLimit == ComputationLimit::TIME;
 	compressorAlgorithmArgs.maxComputationTimeSecs = args->maxComputationTimeSecs;
 	compressorAlgorithmArgs.maxFitnessEvaluationCount = args->maxFitnessEvaluationCount;
+	compressorAlgorithmArgs.useCuda = args->useCuda;
 	
 	// Calculate how many points compressed file can contain
 	int compressedFileDataStorageSize = args->maxCompressedSizeBytes - COMPRESSED_FILE_HEADER_SIZE;

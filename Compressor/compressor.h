@@ -38,6 +38,7 @@ namespace lossycompressor {
 		ComputationLimit computationLimit = ComputationLimit::TIME;
 		double maxComputationTimeSecs = 60;
 		int maxFitnessEvaluationCount;
+		bool useCuda = false;
 	};
 
 	class Compressor {

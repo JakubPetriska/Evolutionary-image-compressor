@@ -48,6 +48,7 @@ namespace lossycompressor {
 		bool limitByTime; // True is algorithm should be limited by time, false if algorithm should be limited by fitness evaluation count
 		double maxComputationTimeSecs;
 		int maxFitnessEvaluationCount;
+		bool useCuda;
 	};
 
 	/*
@@ -89,6 +90,10 @@ namespace lossycompressor {
 
 		LARGE_INTEGER computationStartTime;
 		int fitnessEvaluationCount = 0;
+
+		float calculateFitnessCpu(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
+
+		float calculateFitnessCuda(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
 	protected:
 		CompressorAlgorithmArgs * args;
 

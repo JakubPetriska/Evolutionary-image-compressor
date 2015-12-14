@@ -144,8 +144,17 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 }
 
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
+	if (args->useCuda) {
+		return calculateFitnessCuda(diagram, worstDeviationPerPixelPointIndex);
+	}
+	else {
+		return calculateFitnessCpu(diagram, worstDeviationPerPixelPointIndex);
+	}
+}
+
+float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
 	++fitnessEvaluationCount;
-	
+
 	//LARGE_INTEGER startTime, endTime;
 	//Utils::recordTime(&startTime);
 
@@ -199,6 +208,11 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * wors
 	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
 	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
 	return fitness;
+}
+
+float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
+
+	return 0;
 }
 
 void CompressorAlgorithm::generateRandomDiagram(VoronoiDiagram * output) {
