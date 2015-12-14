@@ -91,9 +91,9 @@ namespace lossycompressor {
 		LARGE_INTEGER computationStartTime;
 		int fitnessEvaluationCount = 0;
 
-		float calculateFitnessCpu(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
+		float calculateFitnessCpu(VoronoiDiagram * diagram);
 
-		float calculateFitnessCuda(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
+		float calculateFitnessCuda(VoronoiDiagram * diagram);
 	protected:
 		CompressorAlgorithmArgs * args;
 
@@ -108,7 +108,7 @@ namespace lossycompressor {
 			Returns fitness of given diagram. Returned fitness is always
 			>= 0 with 0 being the best possible value.
 			*/
-		float calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
+		float calculateFitness(VoronoiDiagram * diagram);
 
 		void generateRandomDiagram(VoronoiDiagram * output);
 

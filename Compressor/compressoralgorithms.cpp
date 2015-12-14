@@ -143,16 +143,16 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 	}
 }
 
-float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
+float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
 	if (args->useCuda) {
-		return calculateFitnessCuda(diagram, worstDeviationPerPixelPointIndex);
+		return calculateFitnessCuda(diagram);
 	}
 	else {
-		return calculateFitnessCpu(diagram, worstDeviationPerPixelPointIndex);
+		return calculateFitnessCpu(diagram);
 	}
 }
 
-float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
+float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {
 	++fitnessEvaluationCount;
 
 	//LARGE_INTEGER startTime, endTime;
@@ -160,13 +160,6 @@ float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram, int * w
 
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
 	float fitness = 0;
-
-	if (worstDeviationPerPixelPointIndex != NULL) {
-		for (int i = 0; i < args->diagramPointsCount; ++i) {
-			deviationSumPerPoint[i] = 0;
-			pixelCountPerPoint[i] = 0;
-		}
-	}
 
 	for (int i = 0; i < args->sourceHeight; ++i) {
 		uint8_t * row = args->sourceImageData[i];
@@ -182,26 +175,7 @@ float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram, int * w
 				/ 255.0f;
 
 			fitness += pixelDeviation;
-
-			if (worstDeviationPerPixelPointIndex != NULL) {
-				deviationSumPerPoint[pointIndex] += pixelDeviation;
-				pixelCountPerPoint[pointIndex] += 1;
-			}
 		}
-	}
-
-	if (worstDeviationPerPixelPointIndex != NULL) {
-		float minDeviationPerPixel;
-		float currentMinDeviationPerPixelPointIndex = -1;
-		for (int i = 0; i < args->diagramPointsCount; ++i) {
-			float deviationPerPixel = deviationSumPerPoint[i] / pixelCountPerPoint[i];
-			if (currentMinDeviationPerPixelPointIndex == -1
-				|| deviationPerPixel < minDeviationPerPixel) {
-				minDeviationPerPixel = deviationPerPixel;
-				currentMinDeviationPerPixelPointIndex = i;
-			}
-		}
-		*worstDeviationPerPixelPointIndex = currentMinDeviationPerPixelPointIndex;
 	}
 
 	//Utils::recordTime(&endTime);
@@ -210,7 +184,7 @@ float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram, int * w
 	return fitness;
 }
 
-float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
+float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram) {
 
 	return 0;
 }

@@ -6,15 +6,13 @@
 using namespace std;
 using namespace lossycompressor;
 
-void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination, int pointToTweak) {
+void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
 	// TODO do this adaptive, also bit mor reasonable
 
 	float movementPerc = 0.3f;
 
 	random_device rd;
-	if (pointToTweak == -1) {
-		pointToTweak = (int)(rd() * (((float)(args->diagramPointsCount - 1)) / rd.max()) + 0.5f);
-	}
+	int pointToTweak = (int)(rd() * (((float)(args->diagramPointsCount - 1)) / rd.max()) + 0.5f);
 
 	float halfRdMax = rd.max() / 2;
 	float horizontalMovementMultiplier = ((float)args->sourceWidth) / halfRdMax;
@@ -59,39 +57,29 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 	VoronoiDiagram * next = new VoronoiDiagram(args->diagramPointsCount);
 	float nextFitness = -1;
 
-	int pointTweakTrialCount = 0;
-	int pointToTweak = 0;
-	int nextPointToTweak = 0;
-
 	// Generate random diagram as our starting position
 	generateRandomDiagram(current);
-	currentFitness = calculateFitness(current, &pointToTweak);
+	currentFitness = calculateFitness(current);
 
 	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
 	for (int i = 0; i < 15 && canContinueComputing(); ++i) {
 		generateRandomDiagram(next);
-		nextFitness = calculateFitness(next, &nextPointToTweak);
+		nextFitness = calculateFitness(next);
 		if (nextFitness < currentFitness) {
 			swap(&current, &next);
 			currentFitness = nextFitness;
-			pointToTweak = nextPointToTweak;
 		}
 	}
 
 	while (canContinueComputing()) {
-		tweak(current, next, pointTweakTrialCount < MAX_POINT_TO_TWEAK_TRIAL_COUNT ? pointToTweak : -1);
-		nextFitness = calculateFitness(next, &nextPointToTweak);
+		tweak(current, next);
+		nextFitness = calculateFitness(next);
 
 		if (nextFitness < currentFitness) {
 			swap(&current, &next);
 			currentFitness = nextFitness;
-			pointToTweak = nextPointToTweak;
-			pointTweakTrialCount = 0;
 
 			onBetterSolutionFound(currentFitness);
-		}
-		else {
-			++pointTweakTrialCount;
 		}
 	}
 

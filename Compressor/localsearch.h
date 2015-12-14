@@ -12,7 +12,7 @@ namespace lossycompressor {
 		/*
 		Copies source diagram into destination while tweaking it.
 		*/
-		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination, int pointToTweak = -1);
+		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination);
 	public:
 		LocalSearch(CompressorAlgorithmArgs* args)
 			: CompressorAlgorithm(args) {};

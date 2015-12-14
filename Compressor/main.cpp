@@ -17,10 +17,10 @@ int main(int argc, char* argv[]) {
 	compressorArgs.destinationCompressedPath = argv[2];
 	compressorArgs.destinationImagePath = argv[3];
 	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
-	compressorArgs.computationType = ComputationType::MEMETIC;
+	compressorArgs.computationType = ComputationType::LOCAL_SEARCH;
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
 	compressorArgs.maxComputationTimeSecs = 5 * 60;
-	compressorArgs.maxFitnessEvaluationCount = 20;//1000;
+	compressorArgs.maxFitnessEvaluationCount = 1000;
 	compressorArgs.useCuda = false;
 
 	Compressor compressor(&compressorArgs);
