@@ -15,7 +15,7 @@ void EvolutionaryAlgorithm::generateInitialPopulation(int populationSize,
 	for (int i = 0; i < populationSize && canContinueComputing(); ++i) {
 		VoronoiDiagram * populationMember = new VoronoiDiagram(args->diagramPointsCount);
 		population->push_back(populationMember);
-		generateRandomDiagram(populationMember);
+		CompressorUtils::generateRandomDiagram(populationMember, args->sourceWidth, args->sourceHeight, compare);
 
 		float memberFitness = calculateFitness(populationMember);
 		populationFitness->push_back(memberFitness);

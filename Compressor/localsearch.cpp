@@ -58,15 +58,15 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 	float nextFitness = -1;
 
 	// Generate random diagram as our starting position
-	generateRandomDiagram(current);
+	CompressorUtils::generateRandomDiagram(current, args->sourceWidth, args->sourceHeight, compare);
 	currentFitness = calculateFitness(current);
 
 	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
 	for (int i = 0; i < 15 && canContinueComputing(); ++i) {
-		generateRandomDiagram(next);
+		CompressorUtils::generateRandomDiagram(next, args->sourceWidth, args->sourceHeight, compare);
 		nextFitness = calculateFitness(next);
 		if (nextFitness < currentFitness) {
-			swap(&current, &next);
+			CompressorUtils::swap(&current, &next);
 			currentFitness = nextFitness;
 		}
 	}
@@ -76,7 +76,7 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 		nextFitness = calculateFitness(next);
 
 		if (nextFitness < currentFitness) {
-			swap(&current, &next);
+			CompressorUtils::swap(&current, &next);
 			currentFitness = nextFitness;
 
 			onBetterSolutionFound(currentFitness);

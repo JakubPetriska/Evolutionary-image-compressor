@@ -2,7 +2,6 @@
 #include "compressoralgorithms.h"
 #include "utils.h"
 #include <cmath>
-#include <random>
 #include <assert.h>
 
 using namespace std;
@@ -189,50 +188,6 @@ float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram) {
 	return 0;
 }
 
-void CompressorAlgorithm::generateRandomDiagram(VoronoiDiagram * output) {
-	random_device rd;
-	float widthMultiplier = ((float)(args->sourceWidth - 1)) / rd.max();
-	float heightMultiplier = ((float)(args->sourceHeight - 1)) / rd.max();
-
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		output->diagramPointsXCoordinates[i] = (int32_t)(rd() * widthMultiplier + 0.5f);
-		output->diagramPointsYCoordinates[i] = (int32_t)(rd() * heightMultiplier + 0.5f);
-	}
-
-	quicksortDiagramPoints(output);
-}
-
-void CompressorAlgorithm::quicksortDiagramPoints(
-	VoronoiDiagram * diagram, int start, int end) {
-
-	if (end == -1) {
-		end = args->diagramPointsCount;
-	}
-
-	if (start < end - 1) {
-		int pivotIndex = end - 1;
-		int upperHalfStart = start;
-		for (int i = start; i < pivotIndex; ++i) {
-			if (compare(diagram, i, pivotIndex) == -1) {
-				Utils::swap(diagram->diagramPointsXCoordinates, i, upperHalfStart);
-				Utils::swap(diagram->diagramPointsYCoordinates, i, upperHalfStart);
-				++upperHalfStart;
-			}
-		}
-		Utils::swap(diagram->diagramPointsXCoordinates, pivotIndex, upperHalfStart);
-		Utils::swap(diagram->diagramPointsYCoordinates, pivotIndex, upperHalfStart);
-
-		quicksortDiagramPoints(diagram, start, upperHalfStart);
-		quicksortDiagramPoints(diagram, upperHalfStart + 1, end);
-	}
-}
-
-void CompressorAlgorithm::swap(VoronoiDiagram ** first, VoronoiDiagram ** second) {
-	VoronoiDiagram * tmp = *first;
-	*first = *second;
-	*second = tmp;
-}
-
 int CompressorAlgorithm::compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex) {
 	return compare(diagram->x(firstPointIndex), diagram->y(firstPointIndex),
 		diagram->x(secondPointIndex), diagram->y(secondPointIndex));
@@ -254,17 +209,13 @@ int CompressorAlgorithm::compare(int32_t firstX, int32_t firstY, int32_t secondX
 int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
 	Color24bit * colors, int ** pixelPointAssignment) {
 	if (args->limitByTime) {
-		startComputationTimer();
+		Utils::recordTime(&computationStartTime);
 	}
 	else {
 		fitnessEvaluationCount = 0;
 	}
 
 	return compressInternal(outputDiagram, colors, pixelPointAssignment);
-}
-
-void CompressorAlgorithm::startComputationTimer() {
-	Utils::recordTime(&computationStartTime);
 }
 
 bool CompressorAlgorithm::canContinueComputing() {

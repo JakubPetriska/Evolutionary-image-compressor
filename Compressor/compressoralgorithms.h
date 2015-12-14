@@ -110,15 +110,9 @@ namespace lossycompressor {
 			*/
 		float calculateFitness(VoronoiDiagram * diagram);
 
-		void generateRandomDiagram(VoronoiDiagram * output);
+		static int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
 
-		void swap(VoronoiDiagram ** first, VoronoiDiagram ** second);
-
-		int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
-
-		int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
-
-		void quicksortDiagramPoints(VoronoiDiagram * diagram, int start = 0, int end = -1);
+		static int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
 
 		/*
 			Does binary search for closet value in the sorted diagram points.
@@ -126,8 +120,6 @@ namespace lossycompressor {
 			Returns index of such point.
 			*/
 		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY);
-
-		void startComputationTimer();
 
 		bool canContinueComputing();
 
