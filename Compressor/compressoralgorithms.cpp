@@ -15,6 +15,85 @@ int32_t VoronoiDiagram::y(int index) {
 	return diagramPointsYCoordinates[index];
 }
 
+float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
+	if (args->useCuda) {
+		return calculateFitnessCuda(diagram);
+	}
+	else {
+		return calculateFitnessCpu(diagram);
+	}
+}
+
+float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {
+	++fitnessEvaluationCount;
+
+	//LARGE_INTEGER startTime, endTime;
+	//Utils::recordTime(&startTime);
+
+	calculateColors(diagram, colorsTmp, pixelPointAssignment);
+	float fitness = 0;
+
+	for (int i = 0; i < args->sourceHeight; ++i) {
+		uint8_t * row = args->sourceImageData[i];
+		for (int j = 0; j < args->sourceWidth; ++j) {
+			int pointIndex = pixelPointAssignment[i][j];
+			Color24bit color = colorsTmp[pointIndex];
+			int colorStartIndexInSourceData = j * 3;
+
+			float pixelDeviation
+				= (abs((float)(row[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
+				+ abs((float)(row[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
+				+ abs((float)(row[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
+				/ 255.0f;
+
+			fitness += pixelDeviation;
+		}
+	}
+
+	//Utils::recordTime(&endTime);
+	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
+	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
+	return fitness;
+}
+
+void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
+	Color24bit * colors,
+	int ** pixelPointAssignment) {
+
+	for (int i = 0; i < args->diagramPointsCount; ++i) {
+		rSums[i] = 0;
+		rCounts[i] = 0;
+		gSums[i] = 0;
+		gCounts[i] = 0;
+		bSums[i] = 0;
+		bCounts[i] = 0;
+	}
+
+	for (int i = 0; i < args->sourceHeight; ++i) {
+		uint8_t * row = args->sourceImageData[i];
+		for (int j = 0; j < args->sourceWidth; ++j) {
+			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
+			assert(pointIndex >= 0);
+			pixelPointAssignment[i][j] = pointIndex;
+
+			int colorStartIndexInSourceData = j * 3;
+			bSums[pointIndex] += row[colorStartIndexInSourceData];
+			bCounts[pointIndex] += 1;
+			gSums[pointIndex] += row[colorStartIndexInSourceData + 1];
+			gCounts[pointIndex] += 1;
+			rSums[pointIndex] += row[colorStartIndexInSourceData + 2];
+			rCounts[pointIndex] += 1;
+		}
+	}
+
+	for (int i = 0; i < args->diagramPointsCount; ++i) {
+		Color24bit * color = &colors[i];
+		color->b = (uint8_t)(bSums[i] / bCounts[i] + 0.5);
+		color->g = (uint8_t)(gSums[i] / gCounts[i] + 0.5);
+		color->r = (uint8_t)(rSums[i] / rCounts[i] + 0.5);
+	}
+}
+
 int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
 	int pixelXCoord, int pixelYCoord) {
 
@@ -102,85 +181,6 @@ int CompressorAlgorithm::findClosestHorizontalPoint(VoronoiDiagram * diagram, in
 	else {
 		return end;
 	}
-}
-
-void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
-	Color24bit * colors,
-	int ** pixelPointAssignment) {
-
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		rSums[i] = 0;
-		rCounts[i] = 0;
-		gSums[i] = 0;
-		gCounts[i] = 0;
-		bSums[i] = 0;
-		bCounts[i] = 0;
-	}
-
-	for (int i = 0; i < args->sourceHeight; ++i) {
-		uint8_t * row = args->sourceImageData[i];
-		for (int j = 0; j < args->sourceWidth; ++j) {
-			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
-			assert(pointIndex >= 0);
-			pixelPointAssignment[i][j] = pointIndex;
-
-			int colorStartIndexInSourceData = j * 3;
-			bSums[pointIndex] += row[colorStartIndexInSourceData];
-			bCounts[pointIndex] += 1;
-			gSums[pointIndex] += row[colorStartIndexInSourceData + 1];
-			gCounts[pointIndex] += 1;
-			rSums[pointIndex] += row[colorStartIndexInSourceData + 2];
-			rCounts[pointIndex] += 1;
-		}
-	}
-
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		Color24bit * color = &colors[i];
-		color->b = (uint8_t)(bSums[i] / bCounts[i] + 0.5);
-		color->g = (uint8_t)(gSums[i] / gCounts[i] + 0.5);
-		color->r = (uint8_t)(rSums[i] / rCounts[i] + 0.5);
-	}
-}
-
-float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
-	if (args->useCuda) {
-		return calculateFitnessCuda(diagram);
-	}
-	else {
-		return calculateFitnessCpu(diagram);
-	}
-}
-
-float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {
-	++fitnessEvaluationCount;
-
-	//LARGE_INTEGER startTime, endTime;
-	//Utils::recordTime(&startTime);
-
-	calculateColors(diagram, colorsTmp, pixelPointAssignment);
-	float fitness = 0;
-
-	for (int i = 0; i < args->sourceHeight; ++i) {
-		uint8_t * row = args->sourceImageData[i];
-		for (int j = 0; j < args->sourceWidth; ++j) {
-			int pointIndex = pixelPointAssignment[i][j];
-			Color24bit color = colorsTmp[pointIndex];
-			int colorStartIndexInSourceData = j * 3;
-
-			float pixelDeviation
-				= (abs((float)(row[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
-				+ abs((float)(row[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
-				+ abs((float)(row[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
-				/ 255.0f;
-
-			fitness += pixelDeviation;
-		}
-	}
-
-	//Utils::recordTime(&endTime);
-	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
-	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
-	return fitness;
 }
 
 float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram) {

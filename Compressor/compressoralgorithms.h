@@ -75,10 +75,6 @@ namespace lossycompressor {
 		float * bSums;
 		int * bCounts;
 
-		// Used during calculation of fitness - estimating best point to tweak
-		float * deviationSumPerPoint;
-		int * pixelCountPerPoint;
-
 		// Array used to store assignment of color to diagram points
 		Color24bit * colorsTmp;
 
@@ -139,8 +135,6 @@ namespace lossycompressor {
 			gCounts(new int[args->diagramPointsCount]),
 			bSums(new float[args->diagramPointsCount]),
 			bCounts(new int[args->diagramPointsCount]),
-			deviationSumPerPoint(new float[args->diagramPointsCount]),
-			pixelCountPerPoint(new int[args->diagramPointsCount]),
 			colorsTmp(new Color24bit[args->diagramPointsCount]),
 			pixelPointAssignment(new int*[args->sourceHeight])
 		{
@@ -155,8 +149,6 @@ namespace lossycompressor {
 			delete[] gCounts;
 			delete[] bSums;
 			delete[] bCounts;
-			delete[] deviationSumPerPoint;
-			delete[] pixelCountPerPoint;
 			delete[] colorsTmp;
 			for (int i = 0; i < args->sourceHeight; ++i) {
 				delete[] pixelPointAssignment[i];
