@@ -1,4 +1,5 @@
 #include "localsearch.h"
+#include "compressorutils.h"
 #include "utils.h"
 #include <random>
 
@@ -97,7 +98,7 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 	onBestSolutionFound(currentFitness);
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
-	copy(current, outputDiagram);
+	CompressorUtils::copy(current, outputDiagram);
 	calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	delete current;

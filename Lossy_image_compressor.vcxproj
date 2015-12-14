@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="Compressor\compressor.cpp" />
     <ClCompile Include="Compressor\compressoralgorithms.cpp" />
+    <ClCompile Include="Compressor\compressorutils.cpp" />
     <ClCompile Include="Compressor\evolutionaryalgorithm.cpp" />
     <ClCompile Include="Compressor\localsearch.cpp" />
     <ClCompile Include="Compressor\main.cpp" />
@@ -132,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h" />
     <ClInclude Include="Compressor\compressoralgorithms.h" />
+    <ClInclude Include="Compressor\compressorutils.h" />
     <ClInclude Include="Compressor\evolutionaryalgorithm.h" />
     <ClInclude Include="Compressor\localsearch.h" />
     <ClInclude Include="Compressor\memeticalgorithm.h" />

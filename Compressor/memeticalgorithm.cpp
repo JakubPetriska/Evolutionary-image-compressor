@@ -1,4 +1,5 @@
 #include "memeticalgorithm.h"
+#include "compressorutils.h"
 
 using namespace std;
 using namespace lossycompressor;
@@ -74,7 +75,7 @@ int MemeticAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 	onBestSolutionFound(bestFitness);
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
-	copy(best, outputDiagram);
+	CompressorUtils::copy(best, outputDiagram);
 	calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	for (int i = 0; i < population.size(); ++i) {

@@ -114,10 +114,6 @@ namespace lossycompressor {
 
 		void swap(VoronoiDiagram ** first, VoronoiDiagram ** second);
 
-		void copyPoint(VoronoiDiagram * source, VoronoiDiagram * destination, int index);
-
-		void copy(VoronoiDiagram * source, VoronoiDiagram * destination);
-
 		int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
 
 		int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);

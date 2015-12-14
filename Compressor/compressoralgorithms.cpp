@@ -259,17 +259,6 @@ void CompressorAlgorithm::swap(VoronoiDiagram ** first, VoronoiDiagram ** second
 	*second = tmp;
 }
 
-void CompressorAlgorithm::copy(VoronoiDiagram * source, VoronoiDiagram * destination) {
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		copyPoint(source, destination, i);
-	}
-}
-
-void CompressorAlgorithm::copyPoint(VoronoiDiagram * source, VoronoiDiagram * destination, int index) {
-	destination->diagramPointsXCoordinates[index] = source->diagramPointsXCoordinates[index];
-	destination->diagramPointsYCoordinates[index] = source->diagramPointsYCoordinates[index];
-}
-
 int CompressorAlgorithm::compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex) {
 	return compare(diagram->x(firstPointIndex), diagram->y(firstPointIndex),
 		diagram->x(secondPointIndex), diagram->y(secondPointIndex));

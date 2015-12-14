@@ -1,4 +1,5 @@
 #include "evolutionaryalgorithm.h"
+#include "compressorutils.h"
 #include "utils.h"
 #include <random>
 
@@ -183,7 +184,7 @@ int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 	onBestSolutionFound(bestFitness);
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
-	copy(best, outputDiagram);
+	CompressorUtils::copy(best, outputDiagram);
 	calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	for (int i = 0; i < population.size(); ++i) {
@@ -212,12 +213,12 @@ void EvolutionaryAlgorithm::crossover(
 			|| (crossoverLastIndex < crossoverStartIndex && i <= crossoverLastIndex);
 
 		if (isCrossoverIndex) {
-			copyPoint(firstParent, secondChild, i);
-			copyPoint(secondParent, firstChild, i);
+			CompressorUtils::copyPoint(firstParent, secondChild, i);
+			CompressorUtils::copyPoint(secondParent, firstChild, i);
 		}
 		else {
-			copyPoint(firstParent, firstChild, i);
-			copyPoint(secondParent, secondChild, i);
+			CompressorUtils::copyPoint(firstParent, firstChild, i);
+			CompressorUtils::copyPoint(secondParent, secondChild, i);
 		}
 	}
 }
