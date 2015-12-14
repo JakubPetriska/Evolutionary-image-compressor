@@ -21,9 +21,6 @@
     <ClCompile Include="Compressor\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Compressor\compressoralgorithms.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Compressor\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,12 +39,18 @@
     <ClCompile Include="Compressor\voronoidiagram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Compressor\fitnessevaluator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compressor\cpufitnessevaluator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compressor\compressoralgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Compressor\compressoralgorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Compressor\utils.h">
@@ -65,10 +68,16 @@
     <ClInclude Include="Compressor\compressorutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Compressor\fitnesscalculator.h">
+    <ClInclude Include="Compressor\voronoidiagram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Compressor\voronoidiagram.h">
+    <ClInclude Include="Compressor\fitnessevaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compressor\cpufitnessevaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compressor\compressoralgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

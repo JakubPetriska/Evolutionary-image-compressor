@@ -76,7 +76,7 @@ int MemeticAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
 	CompressorUtils::copy(best, outputDiagram);
-	calculateColors(outputDiagram, colors, pixelPointAssignment);
+	cpuFitnessEvaluator->calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	for (int i = 0; i < population.size(); ++i) {
 		delete population[i];

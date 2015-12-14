@@ -1,28 +1,53 @@
-#include "compressor.h"
-#include "compressoralgorithms.h"
+#include "cpufitnessevaluator.h"
 #include "utils.h"
+#include "compressorutils.h"
 #include <cmath>
 #include <assert.h>
 
-using namespace std;
 using namespace lossycompressor;
 
-float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
-	return fitnessCalculator->calculateFitness(diagram);
+CpuFitnessEvaluator::CpuFitnessEvaluator(
+	int sourceWidth, int sourceHeight, 
+	int diagramPointsCount, uint8_t ** sourceImageData)
+	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData),
+	rSums(new float[diagramPointsCount]),
+	rCounts(new int[diagramPointsCount]),
+	gSums(new float[diagramPointsCount]),
+	gCounts(new int[diagramPointsCount]),
+	bSums(new float[diagramPointsCount]),
+	bCounts(new int[diagramPointsCount]),
+	colorsTmp(new Color24bit[diagramPointsCount]),
+	pixelPointAssignment(new int*[sourceHeight])
+{
+	for (int i = 0; i < sourceHeight; ++i) {
+		pixelPointAssignment[i] = new int[sourceWidth];
+	}
+};
+
+CpuFitnessEvaluator::~CpuFitnessEvaluator() {
+	delete[] rSums;
+	delete[] rCounts;
+	delete[] gSums;
+	delete[] gCounts;
+	delete[] bSums;
+	delete[] bCounts;
+	delete[] colorsTmp;
+	for (int i = 0; i < sourceHeight; ++i) {
+		delete[] pixelPointAssignment[i];
+	}
+	delete[] pixelPointAssignment;
 }
 
-float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {
-	++fitnessEvaluationCount;
-
+float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	//LARGE_INTEGER startTime, endTime;
 	//Utils::recordTime(&startTime);
 
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
 	float fitness = 0;
 
-	for (int i = 0; i < args->sourceHeight; ++i) {
-		uint8_t * row = args->sourceImageData[i];
-		for (int j = 0; j < args->sourceWidth; ++j) {
+	for (int i = 0; i < sourceHeight; ++i) {
+		uint8_t * row = sourceImageData[i];
+		for (int j = 0; j < sourceWidth; ++j) {
 			int pointIndex = pixelPointAssignment[i][j];
 			Color24bit color = colorsTmp[pointIndex];
 			int colorStartIndexInSourceData = j * 3;
@@ -43,11 +68,11 @@ float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {
 	return fitness;
 }
 
-void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
+void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 	Color24bit * colors,
 	int ** pixelPointAssignment) {
 
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
+	for (int i = 0; i < diagramPointsCount; ++i) {
 		rSums[i] = 0;
 		rCounts[i] = 0;
 		gSums[i] = 0;
@@ -56,9 +81,9 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 		bCounts[i] = 0;
 	}
 
-	for (int i = 0; i < args->sourceHeight; ++i) {
-		uint8_t * row = args->sourceImageData[i];
-		for (int j = 0; j < args->sourceWidth; ++j) {
+	for (int i = 0; i < sourceHeight; ++i) {
+		uint8_t * row = sourceImageData[i];
+		for (int j = 0; j < sourceWidth; ++j) {
 			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
 			assert(pointIndex >= 0);
 			pixelPointAssignment[i][j] = pointIndex;
@@ -73,7 +98,7 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 		}
 	}
 
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
+	for (int i = 0; i < diagramPointsCount; ++i) {
 		Color24bit * color = &colors[i];
 		color->b = (uint8_t)(bSums[i] / bCounts[i] + 0.5);
 		color->g = (uint8_t)(gSums[i] / gCounts[i] + 0.5);
@@ -81,7 +106,7 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 	}
 }
 
-int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
+int CpuFitnessEvaluator::calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
 	int pixelXCoord, int pixelYCoord) {
 
 	int startIndex = findClosestHorizontalPoint(diagram, pixelXCoord, pixelYCoord);
@@ -93,7 +118,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 	bool unacceptableHigherFound = false;
 
 	bool lower = false;
-	for (int i = 1; i <= args->diagramPointsCount; i = lower ? i : i + 1) {
+	for (int i = 1; i <= diagramPointsCount; i = lower ? i : i + 1) {
 		if (unacceptableLowerFound && unacceptableHigherFound) {
 			break;
 		}
@@ -105,7 +130,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 		}
 
 		int currentIndex = lower ? startIndex - i : startIndex + i;
-		if (currentIndex < 0 || currentIndex >= args->diagramPointsCount) {
+		if (currentIndex < 0 || currentIndex >= diagramPointsCount) {
 			if (lower) {
 				unacceptableLowerFound = true;
 			}
@@ -138,15 +163,15 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 	return currentClosestPointIndex;
 }
 
-int CompressorAlgorithm::findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY) {
-	if (args->diagramPointsCount == 1) {
+int CpuFitnessEvaluator::findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY) {
+	if (diagramPointsCount == 1) {
 		return 0;
 	}
 
-	int start = 0, end = args->diagramPointsCount;
+	int start = 0, end = diagramPointsCount;
 	while (start < end - 2) {
 		int pivotIndex = (start + end) / 2;
-		int pixelPivotComparison = compare(pixelX, pixelY, diagram->x(pivotIndex), diagram->y(pivotIndex));
+		int pixelPivotComparison = CompressorUtils::compare(pixelX, pixelY, diagram->x(pivotIndex), diagram->y(pivotIndex));
 		if (pixelPivotComparison == 0) {
 			return pivotIndex;
 		}
@@ -168,59 +193,4 @@ int CompressorAlgorithm::findClosestHorizontalPoint(VoronoiDiagram * diagram, in
 	else {
 		return end;
 	}
-}
-
-float CompressorAlgorithm::calculateFitnessCuda(VoronoiDiagram * diagram) {
-
-	return 0;
-}
-
-int CompressorAlgorithm::compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex) {
-	return compare(diagram->x(firstPointIndex), diagram->y(firstPointIndex),
-		diagram->x(secondPointIndex), diagram->y(secondPointIndex));
-}
-
-int CompressorAlgorithm::compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
-	if (firstX == secondX && firstY == secondY) {
-		return 0;
-	}
-	else if (firstX < secondX
-		|| (firstX == secondX && firstY < secondY)) {
-		return -1;
-	}
-	else {
-		return 1;
-	}
-}
-
-int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
-	Color24bit * colors, int ** pixelPointAssignment) {
-	if (args->limitByTime) {
-		Utils::recordTime(&computationStartTime);
-	}
-	else {
-		fitnessEvaluationCount = 0;
-	}
-
-	return compressInternal(outputDiagram, colors, pixelPointAssignment);
-}
-
-bool CompressorAlgorithm::canContinueComputing() {
-	if (args->limitByTime) {
-		LARGE_INTEGER currentTime;
-		Utils::recordTime(&currentTime);
-		return Utils::calculateInterval(&computationStartTime, &currentTime)
-			< args->maxComputationTimeSecs;
-	}
-	else {
-		return fitnessEvaluationCount < args->maxFitnessEvaluationCount;
-	}
-}
-
-void CompressorAlgorithm::onBetterSolutionFound(float bestFitness) {
-	printf("Found better solution with fitness %f\n", bestFitness);
-}
-
-void CompressorAlgorithm::onBestSolutionFound(float bestFitness) {
-	printf("Found best solution with fitness %f\n", bestFitness);
 }

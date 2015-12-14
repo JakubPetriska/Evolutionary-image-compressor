@@ -2,7 +2,7 @@
 
 #include <string>
 #include <cstdint>
-#include "compressoralgorithms.h"
+#include "compressoralgorithm.h"
 
 /*
 	Class compressing image files on given paths into voronoi diagram.

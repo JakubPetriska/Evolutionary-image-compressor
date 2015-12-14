@@ -17,7 +17,7 @@ void CompressorUtils::copy(VoronoiDiagram * source, VoronoiDiagram * destination
 }
 
 void CompressorUtils::generateRandomDiagram(VoronoiDiagram * output,
-	int32_t sourceWidth, int32_t sourceHeight, int(*compare) (VoronoiDiagram *, int, int)) {
+	int32_t sourceWidth, int32_t sourceHeight) {
 
 	random_device rd;
 	float widthMultiplier = ((float)(sourceWidth - 1)) / rd.max();
@@ -28,12 +28,11 @@ void CompressorUtils::generateRandomDiagram(VoronoiDiagram * output,
 		output->diagramPointsYCoordinates[i] = (int32_t)(rd() * heightMultiplier + 0.5f);
 	}
 
-	quicksortDiagramPoints(output, 0, output->diagramPointsCount, compare);
+	quicksortDiagramPoints(output, 0, output->diagramPointsCount);
 }
 
 void CompressorUtils::quicksortDiagramPoints(
-	VoronoiDiagram * diagram, int start, int end,
-	int(*compare) (VoronoiDiagram *, int, int)) {
+	VoronoiDiagram * diagram, int start, int end) {
 
 	if (start < end - 1) {
 		int pivotIndex = end - 1;
@@ -48,8 +47,8 @@ void CompressorUtils::quicksortDiagramPoints(
 		Utils::swap(diagram->diagramPointsXCoordinates, pivotIndex, upperHalfStart);
 		Utils::swap(diagram->diagramPointsYCoordinates, pivotIndex, upperHalfStart);
 
-		quicksortDiagramPoints(diagram, start, upperHalfStart, compare);
-		quicksortDiagramPoints(diagram, upperHalfStart + 1, end, compare);
+		quicksortDiagramPoints(diagram, start, upperHalfStart);
+		quicksortDiagramPoints(diagram, upperHalfStart + 1, end);
 	}
 }
 
@@ -57,4 +56,22 @@ void CompressorUtils::swap(VoronoiDiagram ** first, VoronoiDiagram ** second) {
 	VoronoiDiagram * tmp = *first;
 	*first = *second;
 	*second = tmp;
+}
+
+int CompressorUtils::compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex) {
+	return compare(diagram->x(firstPointIndex), diagram->y(firstPointIndex),
+		diagram->x(secondPointIndex), diagram->y(secondPointIndex));
+}
+
+int CompressorUtils::compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
+	if (firstX == secondX && firstY == secondY) {
+		return 0;
+	}
+	else if (firstX < secondX
+		|| (firstX == secondX && firstY < secondY)) {
+		return -1;
+	}
+	else {
+		return 1;
+	}
 }

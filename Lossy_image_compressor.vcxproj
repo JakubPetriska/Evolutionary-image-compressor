@@ -122,9 +122,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Compressor\compressor.cpp" />
-    <ClCompile Include="Compressor\compressoralgorithms.cpp" />
+    <ClCompile Include="Compressor\compressoralgorithm.cpp" />
     <ClCompile Include="Compressor\compressorutils.cpp" />
+    <ClCompile Include="Compressor\cpufitnessevaluator.cpp" />
     <ClCompile Include="Compressor\evolutionaryalgorithm.cpp" />
+    <ClCompile Include="Compressor\fitnessevaluator.cpp" />
     <ClCompile Include="Compressor\localsearch.cpp" />
     <ClCompile Include="Compressor\main.cpp" />
     <ClCompile Include="Compressor\memeticalgorithm.cpp" />
@@ -133,10 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h" />
-    <ClInclude Include="Compressor\compressoralgorithms.h" />
+    <ClInclude Include="Compressor\compressoralgorithm.h" />
     <ClInclude Include="Compressor\compressorutils.h" />
+    <ClInclude Include="Compressor\cpufitnessevaluator.h" />
     <ClInclude Include="Compressor\evolutionaryalgorithm.h" />
-    <ClInclude Include="Compressor\fitnesscalculator.h" />
+    <ClInclude Include="Compressor\fitnessevaluator.h" />
     <ClInclude Include="Compressor\localsearch.h" />
     <ClInclude Include="Compressor\memeticalgorithm.h" />
     <ClInclude Include="Compressor\utils.h" />

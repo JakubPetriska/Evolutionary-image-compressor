@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include "voronoidiagram.h"
-#include "fitnesscalculator.h"
+#include "cpufitnessevaluator.h"
 #include "color.h"
 
 #define NOMINMAX
@@ -39,21 +39,17 @@ namespace lossycompressor {
 		*/
 	class CompressorAlgorithm {
 		LARGE_INTEGER computationStartTime;
-		int fitnessEvaluationCount = 0;
 
-		FitnessCalculator * fitnessCalculator;
+		FitnessEvaluator * fitnessEvaluator;
 	protected:
 		CompressorAlgorithmArgs * args;
+		CpuFitnessEvaluator * cpuFitnessEvaluator;
 
 		/*
 			Returns fitness of given diagram. Returned fitness is always
 			>= 0 with 0 being the best possible value.
 			*/
 		float calculateFitness(VoronoiDiagram * diagram);
-
-		static int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
-
-		static int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
 
 		bool canContinueComputing();
 
@@ -65,8 +61,8 @@ namespace lossycompressor {
 			Color24bit * colors,
 			int ** pixelPointAssignment) = 0;
 	public:
-		CompressorAlgorithm(CompressorAlgorithmArgs* args)
-			: args(args) {};
+		CompressorAlgorithm(CompressorAlgorithmArgs* args);
+		~CompressorAlgorithm();
 
 		int compress(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,

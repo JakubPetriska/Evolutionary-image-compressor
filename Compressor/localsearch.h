@@ -1,6 +1,6 @@
 #pragma once
 
-#include "compressoralgorithms.h"
+#include "compressoralgorithm.h"
 
 namespace lossycompressor {
 	/*

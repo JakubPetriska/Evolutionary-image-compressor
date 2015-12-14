@@ -33,14 +33,14 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
 	// Maintain the sorted order of diagram points
 	int currentIndex = pointToTweak;
 	if (xDelta > 0 || (xDelta == 0 && yDelta > 0)) {
-		while (currentIndex < args->diagramPointsCount - 1 && compare(destination, currentIndex, currentIndex + 1) == 1) {
+		while (currentIndex < args->diagramPointsCount - 1 && CompressorUtils::compare(destination, currentIndex, currentIndex + 1) == 1) {
 			Utils::swap(destination->diagramPointsXCoordinates, currentIndex, currentIndex + 1);
 			Utils::swap(destination->diagramPointsYCoordinates, currentIndex, currentIndex + 1);
 			++currentIndex;
 		}
 	}
 	else if (xDelta < 0 || (xDelta == 0 && yDelta < 0)) {
-		while (currentIndex > 0 && compare(destination, currentIndex - 1, currentIndex) == 1) {
+		while (currentIndex > 0 && CompressorUtils::compare(destination, currentIndex - 1, currentIndex) == 1) {
 			Utils::swap(destination->diagramPointsXCoordinates, currentIndex, currentIndex - 1);
 			Utils::swap(destination->diagramPointsYCoordinates, currentIndex, currentIndex - 1);
 			--currentIndex;
@@ -58,12 +58,12 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 	float nextFitness = -1;
 
 	// Generate random diagram as our starting position
-	CompressorUtils::generateRandomDiagram(current, args->sourceWidth, args->sourceHeight, compare);
+	CompressorUtils::generateRandomDiagram(current, args->sourceWidth, args->sourceHeight);
 	currentFitness = calculateFitness(current);
 
 	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
 	for (int i = 0; i < 15 && canContinueComputing(); ++i) {
-		CompressorUtils::generateRandomDiagram(next, args->sourceWidth, args->sourceHeight, compare);
+		CompressorUtils::generateRandomDiagram(next, args->sourceWidth, args->sourceHeight);
 		nextFitness = calculateFitness(next);
 		if (nextFitness < currentFitness) {
 			CompressorUtils::swap(&current, &next);
@@ -87,7 +87,7 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
 	CompressorUtils::copy(current, outputDiagram);
-	calculateColors(outputDiagram, colors, pixelPointAssignment);
+	cpuFitnessEvaluator->calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	delete current;
 	delete next;

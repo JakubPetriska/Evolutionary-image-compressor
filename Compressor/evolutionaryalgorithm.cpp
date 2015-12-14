@@ -15,7 +15,7 @@ void EvolutionaryAlgorithm::generateInitialPopulation(int populationSize,
 	for (int i = 0; i < populationSize && canContinueComputing(); ++i) {
 		VoronoiDiagram * populationMember = new VoronoiDiagram(args->diagramPointsCount);
 		population->push_back(populationMember);
-		CompressorUtils::generateRandomDiagram(populationMember, args->sourceWidth, args->sourceHeight, compare);
+		CompressorUtils::generateRandomDiagram(populationMember, args->sourceWidth, args->sourceHeight);
 
 		float memberFitness = calculateFitness(populationMember);
 		populationFitness->push_back(memberFitness);
@@ -185,7 +185,7 @@ int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
 	CompressorUtils::copy(best, outputDiagram);
-	calculateColors(outputDiagram, colors, pixelPointAssignment);
+	cpuFitnessEvaluator->calculateColors(outputDiagram, colors, pixelPointAssignment);
 
 	for (int i = 0; i < population.size(); ++i) {
 		delete population[i];
