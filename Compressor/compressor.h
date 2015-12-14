@@ -25,7 +25,9 @@ namespace lossycompressor {
 	const int COMPRESSED_FILE_HEADER_SIZE = 14;
 	const int COMPRESSED_FILE_POINT_POSITION_SIZE = 8;
 
-	enum ComputationType {LOCAL_SEARCH, EVOLUTIONARY};
+	enum ComputationType {LOCAL_SEARCH, EVOLUTIONARY, MEMETIC};
+
+	enum ComputationLimit {TIME, FITNESS_COUNT};
 
 	struct CompressorArgs {
 		const char * sourceImagePath;
@@ -33,7 +35,9 @@ namespace lossycompressor {
 		const char * destinationImagePath;
 		uint32_t maxCompressedSizeBytes;
 		ComputationType computationType = ComputationType::LOCAL_SEARCH;
+		ComputationLimit computationLimit = ComputationLimit::TIME;
 		double maxComputationTimeSecs = 60;
+		int maxFitnessEvaluationCount;
 	};
 
 	class Compressor {

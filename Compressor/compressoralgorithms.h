@@ -20,7 +20,7 @@ namespace lossycompressor {
 		Coordinates of diagram points correspond to pixels of the image.
 		Coordinates go from bottom left corner of the image (0, 0) to top
 		right corner of the image (imageWidth - 1, imageHeight - 1).
-	*/
+		*/
 	struct VoronoiDiagram {
 		const int32_t diagramPointsCount;
 		int32_t * const diagramPointsXCoordinates;
@@ -45,7 +45,9 @@ namespace lossycompressor {
 		int32_t sourceHeight;
 		uint8_t ** sourceImageData;
 		int diagramPointsCount;
+		bool limitByTime; // True is algorithm should be limited by time, false if algorithm should be limited by fitness evaluation count
 		double maxComputationTimeSecs;
+		int maxFitnessEvaluationCount;
 	};
 
 	/*
@@ -62,7 +64,7 @@ namespace lossycompressor {
 
 		BEWARE these utility methods use work variables from the instance of this class
 		and hence cannot be executed in parallel.
-	*/
+		*/
 	class CompressorAlgorithm {
 		// Variables used during calculation of colors
 		float * rSums;
@@ -82,24 +84,25 @@ namespace lossycompressor {
 		// 2 dimensional array used to hold assignments of pixels to diagram points
 		int ** pixelPointAssignment;
 
-		int calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram, 
+		int calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
 			int pixelXCoord, int pixelYCoord);
 
 		LARGE_INTEGER computationStartTime;
+		int fitnessEvaluationCount = 0;
 	protected:
 		CompressorAlgorithmArgs * args;
 
 		/*
 			Calculates average colors of all points in diagram into the colors array.
-		*/
-		void calculateColors(VoronoiDiagram * diagram, 
-			Color24bit * colors, 
+			*/
+		void calculateColors(VoronoiDiagram * diagram,
+			Color24bit * colors,
 			int ** pixelPointAssignment);
 
 		/*
 			Returns fitness of given diagram. Returned fitness is always
 			>= 0 with 0 being the best possible value.
-		*/
+			*/
 		float calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex = NULL);
 
 		void generateRandomDiagram(VoronoiDiagram * output);
@@ -107,7 +110,7 @@ namespace lossycompressor {
 		void swap(VoronoiDiagram ** first, VoronoiDiagram ** second);
 
 		void copyPoint(VoronoiDiagram * source, VoronoiDiagram * destination, int index);
-		
+
 		void copy(VoronoiDiagram * source, VoronoiDiagram * destination);
 
 		int compare(VoronoiDiagram * diagram, int firstPointIndex, int secondPointIndex);
@@ -120,27 +123,33 @@ namespace lossycompressor {
 			Does binary search for closet value in the sorted diagram points.
 
 			Returns index of such point.
-		*/
+			*/
 		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY);
 
 		void startComputationTimer();
 
-		double currentComputationTime();
-
 		bool canContinueComputing();
+
+		void onBetterSolutionFound(float bestFitness);
+
+		void onBestSolutionFound(float bestFitness);
+
+		virtual int compressInternal(VoronoiDiagram * outputDiagram,
+			Color24bit * colors,
+			int ** pixelPointAssignment) = 0;
 	public:
 		CompressorAlgorithm(CompressorAlgorithmArgs* args)
 			: args(args),
 			rSums(new float[args->diagramPointsCount]),
 			rCounts(new int[args->diagramPointsCount]),
-			gSums(new float[args->diagramPointsCount]), 
+			gSums(new float[args->diagramPointsCount]),
 			gCounts(new int[args->diagramPointsCount]),
 			bSums(new float[args->diagramPointsCount]),
 			bCounts(new int[args->diagramPointsCount]),
 			deviationSumPerPoint(new float[args->diagramPointsCount]),
 			pixelCountPerPoint(new int[args->diagramPointsCount]),
 			colorsTmp(new Color24bit[args->diagramPointsCount]),
-			pixelPointAssignment(new int*[args->sourceHeight]) 
+			pixelPointAssignment(new int*[args->sourceHeight])
 		{
 			for (int i = 0; i < args->sourceHeight; ++i) {
 				pixelPointAssignment[i] = new int[args->sourceWidth];
@@ -162,8 +171,8 @@ namespace lossycompressor {
 			delete[] pixelPointAssignment;
 		}
 
-		virtual int compress(VoronoiDiagram * outputDiagram, 
-			Color24bit * colors, 
-			int ** pixelPointAssignment) = 0;
+		int compress(VoronoiDiagram * outputDiagram,
+			Color24bit * colors,
+			int ** pixelPointAssignment);
 	};
 }

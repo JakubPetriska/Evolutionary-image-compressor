@@ -22,7 +22,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 	int startIndex = findClosestHorizontalPoint(diagram, pixelXCoord, pixelYCoord);
 	int currentClosestPointIndex = startIndex;
 	double squareDistanceToClosest = Utils::calculateSquareDistance(
-		diagram->x(currentClosestPointIndex), diagram->y(currentClosestPointIndex), 
+		diagram->x(currentClosestPointIndex), diagram->y(currentClosestPointIndex),
 		pixelXCoord, pixelYCoord);
 	bool unacceptableLowerFound = false;
 	bool unacceptableHigherFound = false;
@@ -32,7 +32,7 @@ int CompressorAlgorithm::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 		if (unacceptableLowerFound && unacceptableHigherFound) {
 			break;
 		}
-		
+
 		lower = !lower;
 		if ((lower && unacceptableLowerFound)
 			|| (!lower && unacceptableHigherFound)) {
@@ -144,8 +144,10 @@ void CompressorAlgorithm::calculateColors(VoronoiDiagram * diagram,
 }
 
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * worstDeviationPerPixelPointIndex) {
-	LARGE_INTEGER startTime, endTime;
-	Utils::recordTime(&startTime);
+	++fitnessEvaluationCount;
+	
+	//LARGE_INTEGER startTime, endTime;
+	//Utils::recordTime(&startTime);
 
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
 	float fitness = 0;
@@ -166,8 +168,8 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * wors
 
 			float pixelDeviation
 				= (abs((float)(row[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
-					+ abs((float)(row[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
-					+ abs((float)(row[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
+				+ abs((float)(row[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
+				+ abs((float)(row[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
 				/ 255.0f;
 
 			fitness += pixelDeviation;
@@ -184,7 +186,7 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * wors
 		float currentMinDeviationPerPixelPointIndex = -1;
 		for (int i = 0; i < args->diagramPointsCount; ++i) {
 			float deviationPerPixel = deviationSumPerPoint[i] / pixelCountPerPoint[i];
-			if (currentMinDeviationPerPixelPointIndex == -1 
+			if (currentMinDeviationPerPixelPointIndex == -1
 				|| deviationPerPixel < minDeviationPerPixel) {
 				minDeviationPerPixel = deviationPerPixel;
 				currentMinDeviationPerPixelPointIndex = i;
@@ -193,9 +195,9 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram, int * wors
 		*worstDeviationPerPixelPointIndex = currentMinDeviationPerPixelPointIndex;
 	}
 
-	Utils::recordTime(&endTime);
-	double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
-	printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
+	//Utils::recordTime(&endTime);
+	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
+	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
 	return fitness;
 }
 
@@ -272,16 +274,38 @@ int CompressorAlgorithm::compare(int32_t firstX, int32_t firstY, int32_t secondX
 	}
 }
 
+int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
+	Color24bit * colors, int ** pixelPointAssignment) {
+	if (args->limitByTime) {
+		startComputationTimer();
+	}
+	else {
+		fitnessEvaluationCount = 0;
+	}
+
+	return compressInternal(outputDiagram, colors, pixelPointAssignment);
+}
+
 void CompressorAlgorithm::startComputationTimer() {
 	Utils::recordTime(&computationStartTime);
 }
 
-double CompressorAlgorithm::currentComputationTime() {
-	LARGE_INTEGER currentTime;
-	Utils::recordTime(&currentTime);
-	return Utils::calculateInterval(&computationStartTime, &currentTime);
+bool CompressorAlgorithm::canContinueComputing() {
+	if (args->limitByTime) {
+		LARGE_INTEGER currentTime;
+		Utils::recordTime(&currentTime);
+		return Utils::calculateInterval(&computationStartTime, &currentTime)
+			< args->maxComputationTimeSecs;
+	}
+	else {
+		return fitnessEvaluationCount < args->maxFitnessEvaluationCount;
+	}
 }
 
-bool CompressorAlgorithm::canContinueComputing() {
-	return currentComputationTime() < args->maxComputationTimeSecs;
+void CompressorAlgorithm::onBetterSolutionFound(float bestFitness) {
+	printf("Found better solution with fitness %f\n", bestFitness);
+}
+
+void CompressorAlgorithm::onBestSolutionFound(float bestFitness) {
+	printf("Found best solution with fitness %f\n", bestFitness);
 }

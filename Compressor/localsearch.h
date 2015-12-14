@@ -17,7 +17,8 @@ namespace lossycompressor {
 		LocalSearch(CompressorAlgorithmArgs* args)
 			: CompressorAlgorithm(args) {};
 
-		virtual int compress(VoronoiDiagram * outputDiagram,
+	protected:
+		virtual int compressInternal(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,
 			int ** pixelPointAssignment) override;
 	};

@@ -1,6 +1,5 @@
 #include "compressor.h"
-#include "localsearch.h"
-#include "evolutionaryalgorithm.h"
+#include "memeticalgorithm.h"
 #include <cstdio>
 
 using namespace lossycompressor;
@@ -21,7 +20,9 @@ int Compressor::compress() {
 	compressorAlgorithmArgs.sourceWidth = sourceWidth;
 	compressorAlgorithmArgs.sourceHeight = sourceHeight;
 	compressorAlgorithmArgs.sourceImageData = sourceImageData;
+	compressorAlgorithmArgs.limitByTime = args->computationLimit == ComputationLimit::TIME;
 	compressorAlgorithmArgs.maxComputationTimeSecs = args->maxComputationTimeSecs;
+	compressorAlgorithmArgs.maxFitnessEvaluationCount = args->maxFitnessEvaluationCount;
 	
 	// Calculate how many points compressed file can contain
 	int compressedFileDataStorageSize = args->maxCompressedSizeBytes - COMPRESSED_FILE_HEADER_SIZE;
@@ -30,6 +31,9 @@ int Compressor::compress() {
 
 	if (args->computationType == ComputationType::EVOLUTIONARY) {
 		compressAlgorithm = new EvolutionaryAlgorithm(&compressorAlgorithmArgs);
+	}
+	else if (args->computationType == ComputationType::MEMETIC) {
+		compressAlgorithm = new MemeticAlgorithm(&compressorAlgorithmArgs);
 	}
 	else {
 		compressAlgorithm = new LocalSearch(&compressorAlgorithmArgs);

@@ -49,10 +49,8 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination, i
 	}
 }
 
-int LocalSearch::compress(VoronoiDiagram * outputDiagram,
+int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 	Color24bit * colors, int ** pixelPointAssignment) {
-
-	startComputationTimer();
 
 	VoronoiDiagram * current = new VoronoiDiagram(args->diagramPointsCount);
 	float currentFitness = -1;
@@ -69,7 +67,7 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 	currentFitness = calculateFitness(current, &pointToTweak);
 
 	// Try few random diagrams - it's possible to generate pretty good staring point just randomly
-	for (int i = 0; i < 15; ++i) {
+	for (int i = 0; i < 15 && canContinueComputing(); ++i) {
 		generateRandomDiagram(next);
 		nextFitness = calculateFitness(next, &nextPointToTweak);
 		if (nextFitness < currentFitness) {
@@ -79,7 +77,7 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 		}
 	}
 
-	while (true) {
+	while (canContinueComputing()) {
 		tweak(current, next, pointTweakTrialCount < MAX_POINT_TO_TWEAK_TRIAL_COUNT ? pointToTweak : -1);
 		nextFitness = calculateFitness(next, &nextPointToTweak);
 
@@ -89,20 +87,14 @@ int LocalSearch::compress(VoronoiDiagram * outputDiagram,
 			pointToTweak = nextPointToTweak;
 			pointTweakTrialCount = 0;
 
-			printf("Found better solution with fitness %f\n", currentFitness);
+			onBetterSolutionFound(currentFitness);
 		}
 		else {
 			++pointTweakTrialCount;
 		}
-
-		if (!canContinueComputing()) {
-			printf("Ending after %.4f seconds of calculation\n", currentComputationTime());
-			break;
-		}
 	}
 
-
-	printf("Found best solution with fitness %f\n", currentFitness);
+	onBestSolutionFound(currentFitness);
 
 	// Copy the coordinates of points from the result diagram we obtained to the output diagram
 	copy(current, outputDiagram);
