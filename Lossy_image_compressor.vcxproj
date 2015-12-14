@@ -129,15 +129,18 @@
     <ClCompile Include="Compressor\main.cpp" />
     <ClCompile Include="Compressor\memeticalgorithm.cpp" />
     <ClCompile Include="Compressor\utils.cpp" />
+    <ClCompile Include="Compressor\voronoidiagram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Compressor\compressor.h" />
     <ClInclude Include="Compressor\compressoralgorithms.h" />
     <ClInclude Include="Compressor\compressorutils.h" />
     <ClInclude Include="Compressor\evolutionaryalgorithm.h" />
+    <ClInclude Include="Compressor\fitnesscalculator.h" />
     <ClInclude Include="Compressor\localsearch.h" />
     <ClInclude Include="Compressor\memeticalgorithm.h" />
     <ClInclude Include="Compressor\utils.h" />
+    <ClInclude Include="Compressor\voronoidiagram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

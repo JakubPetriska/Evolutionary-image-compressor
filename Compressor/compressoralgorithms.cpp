@@ -7,21 +7,8 @@
 using namespace std;
 using namespace lossycompressor;
 
-int32_t VoronoiDiagram::x(int index) {
-	return diagramPointsXCoordinates[index];
-}
-
-int32_t VoronoiDiagram::y(int index) {
-	return diagramPointsYCoordinates[index];
-}
-
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
-	if (args->useCuda) {
-		return calculateFitnessCuda(diagram);
-	}
-	else {
-		return calculateFitnessCpu(diagram);
-	}
+	return fitnessCalculator->calculateFitness(diagram);
 }
 
 float CompressorAlgorithm::calculateFitnessCpu(VoronoiDiagram * diagram) {

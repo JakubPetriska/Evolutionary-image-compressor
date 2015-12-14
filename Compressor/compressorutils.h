@@ -1,6 +1,6 @@
 #pragma once
 
-#include "compressoralgorithms.h"
+#include "voronoidiagram.h"
 
 namespace lossycompressor {
 	class CompressorUtils {
