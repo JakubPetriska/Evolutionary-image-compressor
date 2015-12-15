@@ -1,5 +1,6 @@
 #include "compressor.h"
 #include "compressoralgorithm.h"
+#include "cudafitnessevaluator.h"
 #include "utils.h"
 
 using namespace std;
@@ -14,7 +15,11 @@ CompressorAlgorithm::CompressorAlgorithm(CompressorAlgorithmArgs* args)
 		args->sourceImageData);
 
 	if (args->useCuda) {
-		// TODO create new cuda fitness calculator
+		fitnessEvaluator = new CudaFitnessEvaluator(
+			args->sourceWidth,
+			args->sourceHeight,
+			args->diagramPointsCount,
+			args->sourceImageData);
 	}
 	else {
 		fitnessEvaluator = cpuFitnessEvaluator;

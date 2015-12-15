@@ -7,7 +7,7 @@
 using namespace lossycompressor;
 
 CpuFitnessEvaluator::CpuFitnessEvaluator(
-	int sourceWidth, int sourceHeight, 
+	int sourceWidth, int sourceHeight,
 	int diagramPointsCount, uint8_t ** sourceImageData)
 	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData),
 	rSums(new float[diagramPointsCount]),
@@ -17,8 +17,8 @@ CpuFitnessEvaluator::CpuFitnessEvaluator(
 	bSums(new float[diagramPointsCount]),
 	bCounts(new int[diagramPointsCount]),
 	colorsTmp(new Color24bit[diagramPointsCount]),
-	pixelPointAssignment(new int*[sourceHeight])
-{
+	pixelPointAssignment(new int*[sourceHeight]) {
+	
 	for (int i = 0; i < sourceHeight; ++i) {
 		pixelPointAssignment[i] = new int[sourceWidth];
 	}

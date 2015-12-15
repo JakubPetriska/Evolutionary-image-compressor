@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
 	compressorArgs.maxComputationTimeSecs = 5 * 60;
 	compressorArgs.maxFitnessEvaluationCount = 1000;
-	compressorArgs.useCuda = false;
+	compressorArgs.useCuda = true;
 
 	Compressor compressor(&compressorArgs);
 
