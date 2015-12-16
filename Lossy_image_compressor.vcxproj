@@ -96,6 +96,7 @@
     <CudaCompile>
       <TargetMachinePlatform>32</TargetMachinePlatform>
     </CudaCompile>
+    <CudaLink />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

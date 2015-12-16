@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 	compressorArgs.computationType = ComputationType::LOCAL_SEARCH;
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
 	compressorArgs.maxComputationTimeSecs = 5 * 60;
-	compressorArgs.maxFitnessEvaluationCount = 5000;
+	compressorArgs.maxFitnessEvaluationCount = 100;
 	compressorArgs.useCuda = false;
 
 	Compressor compressor(&compressorArgs);
