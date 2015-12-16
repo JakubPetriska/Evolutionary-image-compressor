@@ -1,6 +1,6 @@
 #include "cpufitnessevaluator.h"
-#include "utils.h"
 #include "compressorutils.h"
+#include "utils.h"
 #include <cmath>
 #include <assert.h>
 
@@ -39,12 +39,9 @@ CpuFitnessEvaluator::~CpuFitnessEvaluator() {
 }
 
 float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
-	//LARGE_INTEGER startTime, endTime;
-	//Utils::recordTime(&startTime);
-
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
+	
 	float fitness = 0;
-
 	for (int i = 0; i < sourceHeight; ++i) {
 		uint8_t * row = sourceImageData[i];
 		for (int j = 0; j < sourceWidth; ++j) {
@@ -61,10 +58,6 @@ float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 			fitness += pixelDeviation;
 		}
 	}
-
-	//Utils::recordTime(&endTime);
-	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
-	//printf("Calculating fitness took %.4f seconds\n", calculationTotalTime);
 	return fitness;
 }
 

@@ -1,4 +1,6 @@
 #include "fitnessevaluator.h"
+#include <cstdio>
+#include "utils.h"
 
 using namespace lossycompressor;
 
@@ -12,9 +14,25 @@ FitnessEvaluator::FitnessEvaluator(
 
 FitnessEvaluator::~FitnessEvaluator() {}
 
+double fitnessCalculationLengthsSum = 0;
+int fitnessCalculationCount = 0;
+
 float FitnessEvaluator::calculateFitness(VoronoiDiagram * diagram) {
+	LARGE_INTEGER startTime, endTime;
+	Utils::recordTime(&startTime);
+	
 	++fitnessEvaluationsCount;
-	return calculateFitnessInternal(diagram);
+	float fitness = calculateFitnessInternal(diagram);
+
+	Utils::recordTime(&endTime);
+	double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
+
+	fitnessCalculationLengthsSum += calculationTotalTime;
+	++fitnessCalculationCount;
+	std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n", 
+		calculationTotalTime, fitnessCalculationLengthsSum / fitnessCalculationCount);
+
+	return fitness;
 }
 
 int FitnessEvaluator::getFitnessEvaluationsCount() {
