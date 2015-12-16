@@ -84,21 +84,6 @@ int Compressor::compress() {
 	return 0;
 }
 
-void Compressor::releaseMemory() {
-	if (bitmapFileHeader != NULL) {
-		delete[] bitmapFileHeader;
-	}
-	if (bitmapInfoHeaderAndRest != NULL) {
-		delete[] bitmapInfoHeaderAndRest;
-	}
-	if (sourceImageData != NULL) {
-		for (int i = 0; i < sourceHeight; ++i) {
-			delete[] sourceImageData[i];
-		}
-		delete[] sourceImageData;
-	}
-}
-
 int Compressor::readSourceImageFile() {
 	FILE* file;
 	errno_t err = fopen_s(
@@ -224,4 +209,19 @@ int Compressor::writeCompressedFile(VoronoiDiagram * diagram, Color24bit * color
 	fflush(file);
 	fclose(file);
 	return 0;
+}
+
+void Compressor::releaseMemory() {
+	if (bitmapFileHeader != NULL) {
+		delete[] bitmapFileHeader;
+	}
+	if (bitmapInfoHeaderAndRest != NULL) {
+		delete[] bitmapInfoHeaderAndRest;
+	}
+	if (sourceImageData != NULL) {
+		for (int i = 0; i < sourceHeight; ++i) {
+			delete[] sourceImageData[i];
+		}
+		delete[] sourceImageData;
+	}
 }
