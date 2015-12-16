@@ -19,8 +19,9 @@ static void HandleError(cudaError_t error, const char *file, int line) {
 
 CudaFitnessEvaluator::CudaFitnessEvaluator(
 	int sourceWidth, int sourceHeight,
-	int diagramPointsCount, uint8_t ** sourceImageData)
-	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData) {
+	int diagramPointsCount, 
+	uint8_t * sourceImageData, int sourceDataRowWidthInBytes)
+	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData, sourceDataRowWidthInBytes) {
 
 	CHECK_ERROR(cudaMalloc((void**)&rSums, diagramPointsCount*sizeof(float)));
 	CHECK_ERROR(cudaMalloc((void**)&rCounts, diagramPointsCount*sizeof(int)));

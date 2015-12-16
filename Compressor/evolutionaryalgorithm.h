@@ -54,7 +54,7 @@ namespace lossycompressor {
 
 		virtual int compressInternal(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,
-			int ** pixelPointAssignment) override;
+			int * pixelPointAssignment) override;
 	public:
 		EvolutionaryAlgorithm(CompressorAlgorithmArgs* args)
 			: LocalSearch(args) {};

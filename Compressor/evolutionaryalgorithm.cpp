@@ -147,7 +147,7 @@ void EvolutionaryAlgorithm::mutation(int mutationSize,
 }
 
 int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
-	Color24bit * colors, int ** pixelPointAssignment) {
+	Color24bit * colors, int * pixelPointAssignment) {
 
 	int selectionSize = POPULATION_SIZE * SELECTION_RATE;
 	int breedingSize = selectionSize * CROSSOVER_RATE;

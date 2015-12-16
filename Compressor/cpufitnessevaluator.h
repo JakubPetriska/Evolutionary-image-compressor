@@ -17,7 +17,7 @@ namespace lossycompressor {
 		Color24bit * colorsTmp;
 
 		// 2 dimensional array used to hold assignments of pixels to diagram points
-		int ** pixelPointAssignment;
+		int * pixelPointAssignment;
 		
 		/*
 		Does binary search for closet value in the sorted diagram points.
@@ -33,7 +33,8 @@ namespace lossycompressor {
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram);
 	public:
 		CpuFitnessEvaluator(int sourceWidth, int sourceHeight, 
-			int diagramPointsCount, uint8_t ** sourceImageData);
+			int diagramPointsCount, 
+			uint8_t * sourceImageData, int sourceDataRowWidthInBytes);
 
 		~CpuFitnessEvaluator();
 
@@ -42,6 +43,6 @@ namespace lossycompressor {
 		*/
 		void calculateColors(VoronoiDiagram * diagram,
 			Color24bit * colors,
-			int ** pixelPointAssignment);
+			int * pixelPointAssignment);
 	};
 }

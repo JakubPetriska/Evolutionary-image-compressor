@@ -12,14 +12,16 @@ CompressorAlgorithm::CompressorAlgorithm(CompressorAlgorithmArgs* args)
 		args->sourceWidth, 
 		args->sourceHeight,
 		args->diagramPointsCount,
-		args->sourceImageData);
+		args->sourceImageData,
+		args->sourceDataRowWidthInBytes);
 
 	if (args->useCuda) {
 		fitnessEvaluator = new CudaFitnessEvaluator(
 			args->sourceWidth,
 			args->sourceHeight,
 			args->diagramPointsCount,
-			args->sourceImageData);
+			args->sourceImageData,
+			args->sourceDataRowWidthInBytes);
 	}
 	else {
 		fitnessEvaluator = cpuFitnessEvaluator;
@@ -38,7 +40,7 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
 }
 
 int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
-	Color24bit * colors, int ** pixelPointAssignment) {
+	Color24bit * colors, int * pixelPointAssignment) {
 	if (args->limitByTime) {
 		Utils::recordTime(&computationStartTime);
 	}

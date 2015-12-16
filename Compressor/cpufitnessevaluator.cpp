@@ -8,8 +8,9 @@ using namespace lossycompressor;
 
 CpuFitnessEvaluator::CpuFitnessEvaluator(
 	int sourceWidth, int sourceHeight,
-	int diagramPointsCount, uint8_t ** sourceImageData)
-	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData),
+	int diagramPointsCount, 
+	uint8_t * sourceImageData, int sourceDataRowWidthInBytes)
+	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData, sourceDataRowWidthInBytes),
 	rSums(new float[diagramPointsCount]),
 	rCounts(new int[diagramPointsCount]),
 	gSums(new float[diagramPointsCount]),
@@ -17,12 +18,7 @@ CpuFitnessEvaluator::CpuFitnessEvaluator(
 	bSums(new float[diagramPointsCount]),
 	bCounts(new int[diagramPointsCount]),
 	colorsTmp(new Color24bit[diagramPointsCount]),
-	pixelPointAssignment(new int*[sourceHeight]) {
-	
-	for (int i = 0; i < sourceHeight; ++i) {
-		pixelPointAssignment[i] = new int[sourceWidth];
-	}
-};
+	pixelPointAssignment(new int[sourceHeight * sourceWidth]) {};
 
 CpuFitnessEvaluator::~CpuFitnessEvaluator() {
 	delete[] rSums;
@@ -32,27 +28,23 @@ CpuFitnessEvaluator::~CpuFitnessEvaluator() {
 	delete[] bSums;
 	delete[] bCounts;
 	delete[] colorsTmp;
-	for (int i = 0; i < sourceHeight; ++i) {
-		delete[] pixelPointAssignment[i];
-	}
 	delete[] pixelPointAssignment;
 }
 
 float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	calculateColors(diagram, colorsTmp, pixelPointAssignment);
-	
+
 	float fitness = 0;
 	for (int i = 0; i < sourceHeight; ++i) {
-		uint8_t * row = sourceImageData[i];
 		for (int j = 0; j < sourceWidth; ++j) {
-			int pointIndex = pixelPointAssignment[i][j];
+			int pointIndex = pixelPointAssignment[i * sourceWidth + j];
 			Color24bit color = colorsTmp[pointIndex];
-			int colorStartIndexInSourceData = j * 3;
+			int colorStartIndexInSourceData = i * sourceDataRowWidthInBytes + j * 3;
 
 			float pixelDeviation
-				= (abs((float)(row[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
-				+ abs((float)(row[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
-				+ abs((float)(row[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
+				= (abs((float)(sourceImageData[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
+				+ abs((float)(sourceImageData[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
+				+ abs((float)(sourceImageData[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
 				/ 255.0f;
 
 			fitness += pixelDeviation;
@@ -63,7 +55,7 @@ float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 
 void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 	Color24bit * colors,
-	int ** pixelPointAssignment) {
+	int * pixelPointAssignment) {
 
 	for (int i = 0; i < diagramPointsCount; ++i) {
 		rSums[i] = 0;
@@ -75,18 +67,17 @@ void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 	}
 
 	for (int i = 0; i < sourceHeight; ++i) {
-		uint8_t * row = sourceImageData[i];
 		for (int j = 0; j < sourceWidth; ++j) {
 			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
 			assert(pointIndex >= 0);
-			pixelPointAssignment[i][j] = pointIndex;
+			pixelPointAssignment[i * sourceWidth + j] = pointIndex;
 
-			int colorStartIndexInSourceData = j * 3;
-			bSums[pointIndex] += row[colorStartIndexInSourceData];
+			int colorStartIndexInSourceData = i * sourceDataRowWidthInBytes + j * 3;
+			bSums[pointIndex] += sourceImageData[colorStartIndexInSourceData];
 			bCounts[pointIndex] += 1;
-			gSums[pointIndex] += row[colorStartIndexInSourceData + 1];
+			gSums[pointIndex] += sourceImageData[colorStartIndexInSourceData + 1];
 			gCounts[pointIndex] += 1;
-			rSums[pointIndex] += row[colorStartIndexInSourceData + 2];
+			rSums[pointIndex] += sourceImageData[colorStartIndexInSourceData + 2];
 			rCounts[pointIndex] += 1;
 		}
 	}

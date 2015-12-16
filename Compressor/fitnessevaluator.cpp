@@ -6,11 +6,13 @@ using namespace lossycompressor;
 
 FitnessEvaluator::FitnessEvaluator(
 	int sourceWidth, int sourceHeight, 
-	int diagramPointsCount, uint8_t ** sourceImageData)
+	int diagramPointsCount, 
+	uint8_t * sourceImageData, int sourceDataRowWidthInBytes)
 	: sourceWidth(sourceWidth),
 	sourceHeight(sourceHeight),
 	diagramPointsCount(diagramPointsCount),
-	sourceImageData(sourceImageData) {}
+	sourceImageData(sourceImageData),
+	sourceDataRowWidthInBytes(sourceDataRowWidthInBytes) {}
 
 FitnessEvaluator::~FitnessEvaluator() {}
 

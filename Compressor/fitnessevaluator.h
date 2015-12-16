@@ -10,12 +10,14 @@ namespace lossycompressor {
 		int sourceWidth;
 		int sourceHeight;
 		int diagramPointsCount;
-		uint8_t ** sourceImageData;
+		uint8_t * sourceImageData;
+		int sourceDataRowWidthInBytes;
 
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram) = 0;
 	public:
-		FitnessEvaluator(int sourceWidth, int sourceHeight, 
-			int diagramPointsCount, uint8_t ** sourceImageData);
+		FitnessEvaluator(int sourceWidth, int sourceHeight,
+			int diagramPointsCount, 
+			uint8_t * sourceImageData, int sourceDataRowWidthInBytes);
 		virtual ~FitnessEvaluator();
 
 		float calculateFitness(VoronoiDiagram * diagram);

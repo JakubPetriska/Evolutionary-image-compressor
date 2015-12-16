@@ -55,9 +55,11 @@ namespace lossycompressor {
 		int bitmapInfoHeaderAndRestSize;
 		// Contains the BIH and rest of data until pixel data start
 		int8_t * bitmapInfoHeaderAndRest = NULL;
-		// Pixel data stored by rows of pixels from left to right and bottom to top
+		// Pixel data stored by rows of pixels from left to right and top to bottom
 		int rowWidthInBytes;
-		uint8_t ** sourceImageData = NULL;
+		int rowDataWidthInBytes;
+		int rowOffsetWidthInBytes;
+		uint8_t * sourceImageData = NULL;
 		// Rest of the file after pixel data
 		int sourceImageFileRestSize;
 		int8_t * sourceImageFileRest = NULL;

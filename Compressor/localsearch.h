@@ -20,6 +20,6 @@ namespace lossycompressor {
 	protected:
 		virtual int compressInternal(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,
-			int ** pixelPointAssignment) override;
+			int * pixelPointAssignment) override;
 	};
 }

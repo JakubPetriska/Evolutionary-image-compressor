@@ -14,7 +14,8 @@ namespace lossycompressor {
 	struct CompressorAlgorithmArgs {
 		int32_t sourceWidth;
 		int32_t sourceHeight;
-		uint8_t ** sourceImageData;
+		uint8_t * sourceImageData;
+		int sourceDataRowWidthInBytes;
 		int diagramPointsCount;
 		bool limitByTime; // True is algorithm should be limited by time, false if algorithm should be limited by fitness evaluation count
 		double maxComputationTimeSecs;
@@ -59,13 +60,13 @@ namespace lossycompressor {
 
 		virtual int compressInternal(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,
-			int ** pixelPointAssignment) = 0;
+			int * pixelPointAssignment) = 0;
 	public:
 		CompressorAlgorithm(CompressorAlgorithmArgs* args);
 		~CompressorAlgorithm();
 
 		int compress(VoronoiDiagram * outputDiagram,
 			Color24bit * colors,
-			int ** pixelPointAssignment);
+			int * pixelPointAssignment);
 	};
 }

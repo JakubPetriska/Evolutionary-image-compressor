@@ -49,7 +49,7 @@ void LocalSearch::tweak(VoronoiDiagram * source, VoronoiDiagram * destination) {
 }
 
 int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
-	Color24bit * colors, int ** pixelPointAssignment) {
+	Color24bit * colors, int * pixelPointAssignment) {
 
 	VoronoiDiagram * current = new VoronoiDiagram(args->diagramPointsCount);
 	float currentFitness = -1;

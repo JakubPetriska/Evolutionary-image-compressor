@@ -20,6 +20,7 @@ int Compressor::compress() {
 	compressorAlgorithmArgs.sourceWidth = sourceWidth;
 	compressorAlgorithmArgs.sourceHeight = sourceHeight;
 	compressorAlgorithmArgs.sourceImageData = sourceImageData;
+	compressorAlgorithmArgs.sourceDataRowWidthInBytes = rowWidthInBytes;
 	compressorAlgorithmArgs.limitByTime = args->computationLimit == ComputationLimit::TIME;
 	compressorAlgorithmArgs.maxComputationTimeSecs = args->maxComputationTimeSecs;
 	compressorAlgorithmArgs.maxFitnessEvaluationCount = args->maxFitnessEvaluationCount;
@@ -42,10 +43,7 @@ int Compressor::compress() {
 
 	VoronoiDiagram compressedDiagram(compressorAlgorithmArgs.diagramPointsCount);
 	Color24bit * diagramColors = new Color24bit[compressorAlgorithmArgs.diagramPointsCount];
-	int ** pixelPointAssignment = new int*[sourceHeight];
-	for (int i = 0; i < sourceHeight; ++i) {
-		pixelPointAssignment[i] = new int[sourceWidth];
-	}
+	int * pixelPointAssignment = new int[sourceHeight * sourceWidth];
 
 	compressAlgorithm->compress(&compressedDiagram, diagramColors, pixelPointAssignment);
 	delete compressAlgorithm;
@@ -59,19 +57,19 @@ int Compressor::compress() {
 
 	// Fill the colors of compressed image into the output data (data that we read as input)
 	for (int i = 0; i < sourceHeight; ++i) {
-		uint8_t * row = sourceImageData[i];
 		for (int j = 0; j < sourceWidth; ++j) {
-			int pointIndex = pixelPointAssignment[i][j];
+			int pointIndex = pixelPointAssignment[i * sourceWidth + j];
 			Color24bit color = diagramColors[pointIndex];
-			int colorStartIndexInSourceData = j * 3;
+			int colorStartIndexInSourceData = i * rowWidthInBytes + j * 3;
 
-			row[colorStartIndexInSourceData] = color.b;
-			row[colorStartIndexInSourceData + 1] = color.g;
-			row[colorStartIndexInSourceData + 2] = color.r;
+			sourceImageData[colorStartIndexInSourceData] = color.b;
+			sourceImageData[colorStartIndexInSourceData + 1] = color.g;
+			sourceImageData[colorStartIndexInSourceData + 2] = color.r;
 		}
 	}
 
 	delete[] diagramColors;
+	delete[] pixelPointAssignment;
 
 	err = writeDestinationImageFile();
 	if (err != 0) {
@@ -131,12 +129,21 @@ int Compressor::readSourceImageFile() {
 
 	// Read the raw pixel data
 	rowWidthInBytes = ((sourceColorDepth * sourceWidth + 31) / 32) * 4;
-	sourceImageData = new uint8_t*[sourceHeight];
-	for (int i = 0; i < sourceHeight; ++i) {
-		uint8_t * newRow = new uint8_t[rowWidthInBytes];
-		fread(newRow, 1, rowWidthInBytes, file);
-		sourceImageData[i] = newRow;
+	rowDataWidthInBytes = (sourceColorDepth / 8) * sourceWidth;
+
+	sourceImageData = new uint8_t[sourceHeight * rowDataWidthInBytes];
+
+	// Used to read row offset
+	rowOffsetWidthInBytes = rowWidthInBytes - rowDataWidthInBytes;
+	uint8_t * rowOffset = new uint8_t[rowOffsetWidthInBytes];
+	// Pixel values are stored by rows from bottom to top, we store them from top to bottom
+	for (int i = sourceHeight - 1; i >= 0; --i) {
+		fread(sourceImageData + (i * rowWidthInBytes), 1, rowDataWidthInBytes, file);
+		if (rowOffsetWidthInBytes > 0) {
+			fread(rowOffset, 1, rowOffsetWidthInBytes, file);
+		}
 	}
+	delete[] rowOffset;
 
 	sourceImageFileRestSize = totalFileSize
 		- BITMAP_FILE_HEADER_SIZE 
@@ -164,8 +171,11 @@ int Compressor::writeDestinationImageFile() {
 	fwrite(bitmapFileHeader, 1, BITMAP_FILE_HEADER_SIZE, file);
 	fwrite(bitmapInfoHeaderAndRest, 1, bitmapInfoHeaderAndRestSize, file);
 
-	for (int i = 0; i < sourceHeight; ++i) {
-		fwrite(sourceImageData[i], 1, rowWidthInBytes, file);
+	for (int i = sourceHeight - 1; i >= 0; --i) {
+		fwrite(sourceImageData + i * rowWidthInBytes, 1, rowDataWidthInBytes, file);
+		if (rowOffsetWidthInBytes) {
+			fwrite(sourceImageData, 1, rowOffsetWidthInBytes, file);
+		}
 	}
 	
 	if (sourceImageFileRestSize > 0) {
@@ -219,9 +229,6 @@ void Compressor::releaseMemory() {
 		delete[] bitmapInfoHeaderAndRest;
 	}
 	if (sourceImageData != NULL) {
-		for (int i = 0; i < sourceHeight; ++i) {
-			delete[] sourceImageData[i];
-		}
 		delete[] sourceImageData;
 	}
 }

@@ -19,13 +19,14 @@ namespace lossycompressor {
 		// Array used to store assignment of color to diagram points
 		Color24bit * colorsTmp;
 
-		// 2 dimensional array used to hold assignments of pixels to diagram points
-		int ** pixelPointAssignment;
+		// array used to hold assignments of pixels to diagram points
+		int * pixelPointAssignment;
 	protected:
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram);
 	public:
 		CudaFitnessEvaluator(int sourceWidth, int sourceHeight,
-			int diagramPointsCount, uint8_t ** sourceImageData);
+			int diagramPointsCount,
+			uint8_t * sourceImageData, int sourceDataRowWidthInBytes);
 
 		~CudaFitnessEvaluator();
 	};
