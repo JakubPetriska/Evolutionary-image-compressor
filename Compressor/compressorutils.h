@@ -27,6 +27,6 @@ namespace lossycompressor {
 		y coordinate. Returns 0 if points are equal, otherwise returns
 		number > 0.
 		*/
-		static int compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY);
+		static int compare(int firstX, int firstY, int secondX, int secondY);
 	};
 }

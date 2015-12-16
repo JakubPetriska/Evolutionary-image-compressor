@@ -20,7 +20,7 @@ int Utils::max(int first, int second) {
 	}
 }
 
-double Utils::calculateSquareDistance(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
+double Utils::calculateSquareDistance(int firstX, int firstY, int secondX, int secondY) {
 	return pow(firstX - secondX, 2) + pow(firstY - secondY, 2);
 }
 

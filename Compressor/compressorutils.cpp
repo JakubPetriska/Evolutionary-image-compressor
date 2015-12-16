@@ -63,7 +63,7 @@ int CompressorUtils::compare(VoronoiDiagram * diagram, int firstPointIndex, int 
 		diagram->x(secondPointIndex), diagram->y(secondPointIndex));
 }
 
-int CompressorUtils::compare(int32_t firstX, int32_t firstY, int32_t secondX, int32_t secondY) {
+int CompressorUtils::compare(int firstX, int firstY, int secondX, int secondY) {
 	if (firstX == secondX && firstY == secondY) {
 		return 0;
 	}

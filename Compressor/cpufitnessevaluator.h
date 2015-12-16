@@ -24,7 +24,7 @@ namespace lossycompressor {
 
 		Returns index of such point.
 		*/
-		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY);
+		int findClosestHorizontalPoint(VoronoiDiagram * diagram, int pixelX, int pixelY);
 
 		int calculateDiagramPointIndexForPixel(VoronoiDiagram * diagram,
 			int pixelXCoord, int pixelYCoord);

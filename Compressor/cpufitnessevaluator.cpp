@@ -147,7 +147,7 @@ int CpuFitnessEvaluator::calculateDiagramPointIndexForPixel(VoronoiDiagram * dia
 	return currentClosestPointIndex;
 }
 
-int CpuFitnessEvaluator::findClosestHorizontalPoint(VoronoiDiagram * diagram, int32_t pixelX, int32_t pixelY) {
+int CpuFitnessEvaluator::findClosestHorizontalPoint(VoronoiDiagram * diagram, int pixelX, int pixelY) {
 	if (diagramPointsCount == 1) {
 		return 0;
 	}
