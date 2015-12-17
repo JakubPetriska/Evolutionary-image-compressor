@@ -1,0 +1,1 @@
+cuda-memcheck --log-file log.txt ./Compressor.exe ..\..\test_images\Mona_Lisa.bmp ..\..\test_output\Mona_Lisa.vor ..\..\test_output\Mona_lisa.bmp 4000

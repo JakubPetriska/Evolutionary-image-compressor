@@ -17,7 +17,7 @@ namespace lossycompressor {
 		int * bCounts;
 
 		// Array used to store assignment of color to diagram points
-		Color24bit * colorsTmp;
+		Color24bit * colors;
 
 		// array used to hold assignments of pixels to diagram points
 		int * pixelPointAssignment;

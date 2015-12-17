@@ -33,12 +33,6 @@
     <ClCompile Include="Compressor\memeticalgorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Compressor\compressorutils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Compressor\voronoidiagram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Compressor\fitnessevaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +40,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Compressor\compressoralgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compressor\compressorutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compressor\voronoidiagram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

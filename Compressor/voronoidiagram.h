@@ -10,7 +10,7 @@ namespace lossycompressor {
 	Coordinates go from bottom left corner of the image (0, 0) to top
 	right corner of the image (imageWidth - 1, imageHeight - 1).
 	*/
-	struct VoronoiDiagram {
+	struct VoronoiDiagram{
 		const int32_t diagramPointsCount;
 		int32_t * const diagramPointsXCoordinates;
 		int32_t * const diagramPointsYCoordinates;
