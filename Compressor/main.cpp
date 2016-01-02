@@ -19,8 +19,8 @@ int main(int argc, char* argv[]) {
 	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
 	compressorArgs.computationType = ComputationType::LOCAL_SEARCH;
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
-	compressorArgs.maxComputationTimeSecs = 5 * 60;
-	compressorArgs.maxFitnessEvaluationCount = 10;//100000 * 2;
+	compressorArgs.maxComputationTimeSecs = 60 * 10;
+	compressorArgs.maxFitnessEvaluationCount = 1000;
 	compressorArgs.useCuda = true;
 
 	Compressor compressor(&compressorArgs);

@@ -129,12 +129,12 @@ int Compressor::readSourceImageFile() {
 
 	// Read the raw pixel data
 	rowWidthInBytes = ((sourceColorDepth * sourceWidth + 31) / 32) * 4;
-	rowDataWidthInBytes = (sourceColorDepth / 8) * sourceWidth;
+	rowOffsetWidthInBytes = rowWidthInBytes % 4;
+	rowDataWidthInBytes = rowWidthInBytes - rowOffsetWidthInBytes;
 
 	sourceImageData = new uint8_t[sourceHeight * rowDataWidthInBytes];
 
 	// Used to read row offset
-	rowOffsetWidthInBytes = rowWidthInBytes - rowDataWidthInBytes;
 	uint8_t * rowOffset = new uint8_t[rowOffsetWidthInBytes];
 	// Pixel values are stored by rows from bottom to top, we store them from top to bottom
 	for (int i = sourceHeight - 1; i >= 0; --i) {
@@ -150,7 +150,7 @@ int Compressor::readSourceImageFile() {
 		- bitmapInfoHeaderAndRestSize 
 		- (sourceHeight * rowWidthInBytes);
 	if (sourceImageFileRestSize > 0) {
-		sourceImageFileRest = new int8_t[sourceHeight];
+		sourceImageFileRest = new int8_t[sourceImageFileRestSize];
 		fread(sourceImageFileRest, 1, sourceImageFileRestSize, file);
 	}
 
@@ -173,7 +173,7 @@ int Compressor::writeDestinationImageFile() {
 
 	for (int i = sourceHeight - 1; i >= 0; --i) {
 		fwrite(sourceImageData + i * rowWidthInBytes, 1, rowDataWidthInBytes, file);
-		if (rowOffsetWidthInBytes) {
+		if (rowOffsetWidthInBytes > 0) {
 			fwrite(sourceImageData, 1, rowOffsetWidthInBytes, file);
 		}
 	}
