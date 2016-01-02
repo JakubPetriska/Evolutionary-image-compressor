@@ -31,8 +31,8 @@ float FitnessEvaluator::calculateFitness(VoronoiDiagram * diagram) {
 
 	fitnessCalculationLengthsSum += calculationTotalTime;
 	++fitnessCalculationCount;
-	std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n", 
-		calculationTotalTime, fitnessCalculationLengthsSum / fitnessCalculationCount);
+	//std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n", 
+	//	calculationTotalTime, fitnessCalculationLengthsSum / fitnessCalculationCount);
 
 	return fitness;
 }

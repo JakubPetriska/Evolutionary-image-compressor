@@ -6,6 +6,8 @@
 
 namespace lossycompressor {
 	class CudaFitnessEvaluator : public FitnessEvaluator {
+		int diagramPointsCoordinatesSize;
+		
 		// All pointers to work variables point to device (GPU) memory
 
 		// Holds sums of colors and counts of pixels
@@ -24,6 +26,9 @@ namespace lossycompressor {
 
 		// Image data on device
 		uint8_t * devSourceImageData;
+
+		VoronoiDiagram * diagram;
+		VoronoiDiagram * devDiagram;
 	protected:
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram);
 	public:

@@ -3,7 +3,9 @@
 #include "utils.h"
 #include <cmath>
 #include <assert.h>
+#include <cstdio>
 
+using namespace std;
 using namespace lossycompressor;
 
 CpuFitnessEvaluator::CpuFitnessEvaluator(
@@ -66,13 +68,13 @@ void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 		bCounts[i] = 0;
 	}
 
-	for (int i = 0; i < sourceHeight; ++i) {
-		for (int j = 0; j < sourceWidth; ++j) {
-			int pointIndex = calculateDiagramPointIndexForPixel(diagram, j, i);
+	for (int i = 0; i < sourceWidth; ++i) {
+		for (int j = 0; j < sourceHeight; ++j) {
+			int pointIndex = calculateDiagramPointIndexForPixel(diagram, i, j);
 			assert(pointIndex >= 0);
-			pixelPointAssignment[i * sourceWidth + j] = pointIndex;
+			pixelPointAssignment[i + j * sourceWidth] = pointIndex;
 
-			int colorStartIndexInSourceData = i * sourceDataRowWidthInBytes + j * 3;
+			int colorStartIndexInSourceData = i * 3 + j * sourceDataRowWidthInBytes;
 			bSums[pointIndex] += sourceImageData[colorStartIndexInSourceData];
 			bCounts[pointIndex] += 1;
 			gSums[pointIndex] += sourceImageData[colorStartIndexInSourceData + 1];

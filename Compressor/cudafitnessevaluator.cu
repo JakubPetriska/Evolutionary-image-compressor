@@ -39,6 +39,19 @@ CudaFitnessEvaluator::CudaFitnessEvaluator(
 	int sourceDataSize = sourceHeight*sourceWidth * 3 * sizeof(uint8_t);
 	CHECK_ERROR(cudaMalloc((void**)&devSourceImageData, sourceDataSize));
 	CHECK_ERROR(cudaMemcpy(devSourceImageData, sourceImageData, sourceDataSize, cudaMemcpyHostToDevice));
+
+	// Allocate arrays for voronoi diagram saved on device
+	diagramPointsCoordinatesSize = diagramPointsCount * sizeof(int32_t);
+	int32_t * devDiagramPointsXCoordinates;
+	CHECK_ERROR(cudaMalloc((void**)&devDiagramPointsXCoordinates, diagramPointsCoordinatesSize));
+	int32_t * devDiagramPointsYCoordinates;
+	CHECK_ERROR(cudaMalloc((void**)&devDiagramPointsYCoordinates, diagramPointsCoordinatesSize));
+
+	diagram = new VoronoiDiagram(diagramPointsCount, devDiagramPointsXCoordinates, devDiagramPointsYCoordinates);
+	CHECK_ERROR(cudaMalloc((void**)&devDiagram, sizeof(VoronoiDiagram)));
+	CHECK_ERROR(cudaMemcpy(devDiagram, diagram, sizeof(VoronoiDiagram), cudaMemcpyHostToDevice));
+
+	// TODO release all these
 }
 
 CudaFitnessEvaluator::~CudaFitnessEvaluator() {}
@@ -198,8 +211,8 @@ __global__ void calculateColorsSumsKernel(
 
 	// If pixel of this thread is in images
 	if (pixelHorizontal < sourceWidth && pixelVertical < sourceHeight) {
-		int linearIndex = pixelHorizontal * sourceWidth + pixelVertical;
-		int colorStartIndexInSourceData = pixelVertical * sourceDataRowWidthInBytes + pixelHorizontal * 3;
+		int linearIndex = pixelHorizontal + sourceWidth * pixelVertical;
+		int colorStartIndexInSourceData = pixelHorizontal * 3 + pixelVertical * sourceDataRowWidthInBytes;
 
 		// Find diagram points for all pixels and calculate colors of individual points
 		int pointIndex = calculateDiagramPointIndexForPixel(diagramPointsCount, devDiagram, pixelHorizontal, pixelVertical);
@@ -250,7 +263,7 @@ __global__ void calculateFitnessKernel(
 
 	// If pixel of this thread is in images
 	if (pixelHorizontal < sourceWidth && pixelVertical < sourceHeight) {
-		int linearIndex = pixelHorizontal * sourceWidth + pixelVertical;
+		int linearIndex = pixelHorizontal + pixelVertical * sourceWidth;
 		int colorStartIndexInSourceData = pixelVertical * sourceDataRowWidthInBytes + pixelHorizontal * 3;
 
 		int pointIndex = pixelPointAssignment[linearIndex];
@@ -271,9 +284,10 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	CHECK_ERROR(cudaMalloc((void**)&devFitness, sizeof(float)));
 	CHECK_ERROR(cudaMemset((void*)devFitness, 0, sizeof(float)));
 
-	VoronoiDiagram * devDiagram;
-	CHECK_ERROR(cudaMalloc((void**)&devDiagram, sizeof(VoronoiDiagram)));
-	CHECK_ERROR(cudaMemcpy(devDiagram, diagram, sizeof(VoronoiDiagram), cudaMemcpyHostToDevice));
+	CHECK_ERROR(cudaMemcpy(this->diagram->diagramPointsXCoordinates, diagram->diagramPointsXCoordinates,
+		diagramPointsCoordinatesSize, cudaMemcpyHostToDevice));
+	CHECK_ERROR(cudaMemcpy(this->diagram->diagramPointsYCoordinates, diagram->diagramPointsYCoordinates,
+		diagramPointsCoordinatesSize, cudaMemcpyHostToDevice));
 
 	int everyPointThreadCount = BLOCK_SIZE * BLOCK_SIZE;
 	int everyPointBlocksCount = diagramPointsCount / everyPointThreadCount;
@@ -321,7 +335,5 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	// Copy back result fitness
 	float fitness = 0;
 	CHECK_ERROR(cudaMemcpy(&fitness, devFitness, sizeof(float), cudaMemcpyDeviceToHost));
-
-	CHECK_ERROR(cudaFree(devDiagram));
 	return fitness;
 }

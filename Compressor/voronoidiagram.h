@@ -12,17 +12,24 @@ namespace lossycompressor {
 	*/
 	struct VoronoiDiagram{
 		const int32_t diagramPointsCount;
-		int32_t * const diagramPointsXCoordinates;
-		int32_t * const diagramPointsYCoordinates;
+		int32_t * diagramPointsXCoordinates;
+		int32_t * diagramPointsYCoordinates;
 
 		VoronoiDiagram(int32_t diagramPointsCount)
 			: diagramPointsCount(diagramPointsCount),
 			diagramPointsXCoordinates(new int32_t[diagramPointsCount]),
 			diagramPointsYCoordinates(new int32_t[diagramPointsCount]) {}
 
+		VoronoiDiagram(int32_t diagramPointsCount, 
+			int32_t * diagramPointsXCoordinates, int32_t * diagramPointsYCoordinates)
+			: diagramPointsCount(diagramPointsCount),
+			diagramPointsXCoordinates(diagramPointsXCoordinates),
+			diagramPointsYCoordinates(diagramPointsYCoordinates) {}
+
 		~VoronoiDiagram() {
-			delete[] diagramPointsXCoordinates;
-			delete[] diagramPointsYCoordinates;
+			// TODO do something
+			//delete[] diagramPointsXCoordinates;
+			//delete[] diagramPointsYCoordinates;
 		}
 
 		int32_t x(int index);
