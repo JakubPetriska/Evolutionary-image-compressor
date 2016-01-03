@@ -146,6 +146,31 @@ void EvolutionaryAlgorithm::mutation(int mutationSize,
 	}
 }
 
+void EvolutionaryAlgorithm::crossover(
+	VoronoiDiagram * firstParent, VoronoiDiagram * secondParent,
+	VoronoiDiagram * firstChild, VoronoiDiagram * secondChild) {
+
+	int crossoverStartIndex = Utils::generateRandom(args->diagramPointsCount - 1);
+	int crossoverLength = Utils::generateRandom(args->diagramPointsCount - 1) + 1;
+
+	int crossoverLastIndexOverlapping = crossoverStartIndex + crossoverLength;
+	int crossoverLastIndex = crossoverLastIndexOverlapping % args->diagramPointsCount;
+
+	for (int i = 0; i < args->diagramPointsCount; ++i) {
+		bool isCrossoverIndex = (i >= crossoverStartIndex && i <= crossoverLastIndexOverlapping)
+			|| (crossoverLastIndex < crossoverStartIndex && i <= crossoverLastIndex);
+
+		if (isCrossoverIndex) {
+			CompressorUtils::copyPoint(firstParent, secondChild, i);
+			CompressorUtils::copyPoint(secondParent, firstChild, i);
+		}
+		else {
+			CompressorUtils::copyPoint(firstParent, firstChild, i);
+			CompressorUtils::copyPoint(secondParent, secondChild, i);
+		}
+	}
+}
+
 int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 	Color24bit * colors, int * pixelPointAssignment) {
 
@@ -196,29 +221,4 @@ int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 	}
 
 	return 0;
-}
-
-void EvolutionaryAlgorithm::crossover(
-	VoronoiDiagram * firstParent, VoronoiDiagram * secondParent,
-	VoronoiDiagram * firstChild, VoronoiDiagram * secondChild) {
-
-	int crossoverStartIndex = Utils::generateRandom(args->diagramPointsCount - 1);
-	int crossoverLength = Utils::generateRandom(args->diagramPointsCount - 1) + 1;
-
-	int crossoverLastIndexOverlapping = crossoverStartIndex + crossoverLength;
-	int crossoverLastIndex = crossoverLastIndexOverlapping % args->diagramPointsCount;
-
-	for (int i = 0; i < args->diagramPointsCount; ++i) {
-		bool isCrossoverIndex = (i >= crossoverStartIndex && i <= crossoverLastIndexOverlapping)
-			|| (crossoverLastIndex < crossoverStartIndex && i <= crossoverLastIndex);
-
-		if (isCrossoverIndex) {
-			CompressorUtils::copyPoint(firstParent, secondChild, i);
-			CompressorUtils::copyPoint(secondParent, firstChild, i);
-		}
-		else {
-			CompressorUtils::copyPoint(firstParent, firstChild, i);
-			CompressorUtils::copyPoint(secondParent, secondChild, i);
-		}
-	}
 }
