@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include "compressoralgorithm.h"
+#include <string>
 
 /*
 	Class compressing image files on given paths into voronoi diagram.
@@ -39,6 +40,8 @@ namespace lossycompressor {
 		double maxComputationTimeSecs = 60;
 		int maxFitnessEvaluationCount;
 		bool useCuda = false;
+		char * logFileName = NULL;
+		bool logImprovementToConsole;
 	};
 
 	class Compressor {
@@ -74,10 +77,10 @@ namespace lossycompressor {
 	public:
 		const int SUPPORTED_COLOR_DEPTH = 24;
 
-		const int ERROR_FILE_COULD_NOT_OPEN_FILE = 2;
-		const int ERROR_FILE_READING_INVALID_BMP_HEADER = 3;
-		const int ERROR_FILE_READING_UNSUPPORTED_COLOR_DEPTH = 4;
-		const int ERROR_FILE_READING_UNSUPPORTED_IMAGE_COMPRESSION = 5;
+		static const int ERROR_FILE_COULD_NOT_OPEN_FILE = 2;
+		static const int ERROR_FILE_READING_INVALID_BMP_HEADER = 3;
+		static const int ERROR_FILE_READING_UNSUPPORTED_COLOR_DEPTH = 4;
+		static const int ERROR_FILE_READING_UNSUPPORTED_IMAGE_COMPRESSION = 5;
 
 		Compressor(CompressorArgs * args) : args(args) {};
 		int compress();

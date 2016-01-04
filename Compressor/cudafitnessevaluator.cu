@@ -272,8 +272,7 @@ __global__ void calculateFitnessKernel(
 		float pixelDeviation
 			= (fabsf((float)(devSourceImageData[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
 			+ fabsf((float)(devSourceImageData[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
-			+ fabsf((float)(devSourceImageData[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
-			/ 255.0f;
+			+ fabsf((float)(devSourceImageData[colorStartIndexInSourceData + 2] - color.r))); // Absolute blue color deviation
 
 		atomicAdd(outputFitness, pixelDeviation);
 	}

@@ -78,8 +78,6 @@ int LocalSearch::compressInternal(VoronoiDiagram * outputDiagram,
 		if (nextFitness < currentFitness) {
 			CompressorUtils::swap(&current, &next);
 			currentFitness = nextFitness;
-
-			onBetterSolutionFound(currentFitness);
 		}
 	}
 

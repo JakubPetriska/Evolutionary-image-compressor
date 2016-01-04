@@ -24,8 +24,6 @@ int MemeticAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 		&population, &populationFitness,
 		&bestFitness, &best);
 
-	onBetterSolutionFound(bestFitness);
-
 	while (canContinueComputing()) {
 		selection(selectionSize, &population, &populationFitness, &diagramPool);
 		
@@ -51,8 +49,6 @@ int MemeticAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 					if (memberFitness < bestFitness) {
 						bestFitness = memberFitness;
 						best = member;
-
-						onBetterSolutionFound(bestFitness);
 					}
 				}
 			}

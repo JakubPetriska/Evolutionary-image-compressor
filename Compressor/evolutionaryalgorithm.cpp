@@ -98,8 +98,6 @@ void EvolutionaryAlgorithm::breeding(int breedingSize, int maxBredMemberIndex,
 			if (newMemberFitness < *bestFitness) {
 				*bestFitness = newMemberFitness;
 				*best = newMember;
-
-				onBetterSolutionFound(*bestFitness);
 			}
 		}
 	}
@@ -134,8 +132,6 @@ void EvolutionaryAlgorithm::mutation(int mutationSize,
 		if (newMemberFitness < *bestFitness) {
 			*bestFitness = newMemberFitness;
 			*best = newMember;
-
-			onBetterSolutionFound(*bestFitness);
 		}
 
 		// Put mutated member after elements available for mutation as given by mutationPopSize
@@ -190,8 +186,6 @@ int EvolutionaryAlgorithm::compressInternal(VoronoiDiagram * outputDiagram,
 	generateInitialPopulation(POPULATION_SIZE,
 		&population, &populationFitness,
 		&bestFitness, &best);
-
-	onBetterSolutionFound(bestFitness);
 
 	while (canContinueComputing()) {
 		selection(selectionSize, &population, &populationFitness, &diagramPool);

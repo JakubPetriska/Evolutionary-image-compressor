@@ -36,7 +36,9 @@ CompressorAlgorithm::~CompressorAlgorithm() {
 }
 
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
-	return fitnessEvaluator->calculateFitness(diagram);
+	float fitness = fitnessEvaluator->calculateFitness(diagram);
+	onIteration(fitness);
+	return fitness;
 	//float cudaFitness = fitnessEvaluator->calculateFitness(diagram);
 	//float cpuFitness = cpuFitnessEvaluator->calculateFitness(diagram);
 	//printf("%f %f %f\n", cudaFitness, cpuFitness, cudaFitness - cpuFitness);
@@ -52,7 +54,24 @@ int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
 		fitnessEvaluator->resetFitnessCalculationCount();
 	}
 
-	return compressInternal(outputDiagram, colors, pixelPointAssignment);
+	// Open log file
+	if (args->logFileName != NULL) {
+		errno_t err = fopen_s(
+			&logFile,
+			args->logFileName,
+			"ab");
+		if (err != 0 || logFile == NULL) {
+			return Compressor::ERROR_FILE_COULD_NOT_OPEN_FILE;
+		}
+	}
+
+	int result = compressInternal(outputDiagram, colors, pixelPointAssignment);
+	if (args->logFileName != NULL) {
+		fprintf(logFile, "\n");
+		fflush(logFile);
+		fclose(logFile);
+	}
+	return result;
 }
 
 bool CompressorAlgorithm::canContinueComputing() {
@@ -67,8 +86,17 @@ bool CompressorAlgorithm::canContinueComputing() {
 	}
 }
 
-void CompressorAlgorithm::onBetterSolutionFound(float bestFitness) {
-	printf("Found better solution with fitness %f\n", bestFitness);
+void CompressorAlgorithm::onIteration(float fitness) {
+	bool isFirstIteration = bestFitness == -1;
+	if (isFirstIteration || fitness < bestFitness) {
+		bestFitness = fitness;
+		if (args->logImprovementToConsole) {
+			printf("Found better solution with fitness %f\n", bestFitness);
+		}
+	}
+	if (args->logFileName != NULL) {
+		fprintf(logFile, isFirstIteration ? "%f" : ";%f", bestFitness);
+	}
 }
 
 void CompressorAlgorithm::onBestSolutionFound(float bestFitness) {

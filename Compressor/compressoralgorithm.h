@@ -21,6 +21,8 @@ namespace lossycompressor {
 		double maxComputationTimeSecs;
 		int maxFitnessEvaluationCount;
 		bool useCuda;
+		char * logFileName;
+		bool logImprovementToConsole;
 	};
 
 	/*
@@ -42,6 +44,10 @@ namespace lossycompressor {
 		LARGE_INTEGER computationStartTime;
 
 		FitnessEvaluator * fitnessEvaluator;
+		
+		FILE* logFile;
+
+		float bestFitness = -1;
 	protected:
 		CompressorAlgorithmArgs * args;
 		CpuFitnessEvaluator * cpuFitnessEvaluator;
@@ -54,7 +60,7 @@ namespace lossycompressor {
 
 		bool canContinueComputing();
 
-		void onBetterSolutionFound(float bestFitness);
+		void onIteration(float bestFitness);
 
 		void onBestSolutionFound(float bestFitness);
 

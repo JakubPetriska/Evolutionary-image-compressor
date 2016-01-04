@@ -46,8 +46,7 @@ float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 			float pixelDeviation
 				= (abs((float)(sourceImageData[colorStartIndexInSourceData] - color.b)) // Absolute red color deviation
 				+ abs((float)(sourceImageData[colorStartIndexInSourceData + 1] - color.g)) // Absolute green color deviation
-				+ abs((float)(sourceImageData[colorStartIndexInSourceData + 2] - color.r))) // Absolute blue color deviation
-				/ 255.0f;
+				+ abs((float)(sourceImageData[colorStartIndexInSourceData + 2] - color.r))); // Absolute blue color deviation
 
 			fitness += pixelDeviation;
 		}
