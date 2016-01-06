@@ -42,6 +42,7 @@ float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
 	//float cudaFitness = fitnessEvaluator->calculateFitness(diagram);
 	//float cpuFitness = cpuFitnessEvaluator->calculateFitness(diagram);
 	//printf("%f %f %f\n", cudaFitness, cpuFitness, cudaFitness - cpuFitness);
+	//onIteration(cudaFitness);
 	//return cudaFitness;
 }
 

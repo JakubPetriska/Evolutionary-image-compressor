@@ -334,5 +334,5 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	// Copy back result fitness
 	float fitness = 0;
 	CHECK_ERROR(cudaMemcpy(&fitness, devFitness, sizeof(float), cudaMemcpyDeviceToHost));
-	return fitness;
+	return fitness / (sourceWidth * sourceHeight);
 }

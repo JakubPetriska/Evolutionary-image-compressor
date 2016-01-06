@@ -8,16 +8,29 @@ using namespace lossycompressor;
 
 #define ITERATION_COUNT 15
 
-int doTestIteration(char* argv[], char * logFileName, ComputationType computationType) {
+int doTestIteration(ComputationType computationType, char * logFileName) {
+	string inputFileName = "Mona_Lisa";
+	//string inputFileName = "abstraktni_krivky";
+	//string inputFileName = "kubismus_krajina";
+
+	string fileFormatImage = ".bmp";
+	string fileFormatVor = ".vor";
+	string folderInput = "test_images/";
+	string folderOutput = "test_output/";
+
+	string sourceImagePath = folderInput + inputFileName + fileFormatImage;
+	string destinationCompressedPath = folderOutput + inputFileName + fileFormatVor;
+	string destinationImagePath = folderOutput + inputFileName + fileFormatImage;
+
 	CompressorArgs compressorArgs;
-	compressorArgs.sourceImagePath = argv[1];
-	compressorArgs.destinationCompressedPath = argv[2];
-	compressorArgs.destinationImagePath = argv[3];
-	compressorArgs.maxCompressedSizeBytes = atoi(argv[4]);
+	compressorArgs.sourceImagePath = sourceImagePath.c_str();
+	compressorArgs.destinationCompressedPath = destinationCompressedPath.c_str();
+	compressorArgs.destinationImagePath = destinationImagePath.c_str();
+	compressorArgs.maxCompressedSizeBytes = 4000;
 	compressorArgs.computationType = computationType;
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
 	compressorArgs.maxComputationTimeSecs = 60 * 10;
-	compressorArgs.maxFitnessEvaluationCount = 10;
+	compressorArgs.maxFitnessEvaluationCount = 50000;
 	compressorArgs.useCuda = true;
 	compressorArgs.logFileName = logFileName;
 	compressorArgs.logImprovementToConsole = false;
@@ -38,14 +51,10 @@ int doTestIteration(char* argv[], char * logFileName, ComputationType computatio
 }
 
 int main(int argc, char* argv[]) {
-	if (argc < 4) {
-		printf("Usage: source_image_file_path compressed_file_path compressed_image_file_path max_size_in_bytes\n");
-		return 1;
-	}
-
-	for (int i = 0; i < ITERATION_COUNT; ++i) {
-		doTestIteration(argv, "log_test.csv", ComputationType::MEMETIC);
-	}
+	//for (int i = 0; i < ITERATION_COUNT; ++i) {
+	//	doTestIteration(argv, "log_test.csv", ComputationType::MEMETIC);
+	//}
+	doTestIteration(ComputationType::LOCAL_SEARCH, NULL);
 }
 
 //int main(int argc, char* argv[]) {

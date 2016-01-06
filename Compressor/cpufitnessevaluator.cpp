@@ -51,7 +51,7 @@ float CpuFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 			fitness += pixelDeviation;
 		}
 	}
-	return fitness;
+	return fitness / (sourceWidth * sourceHeight);
 }
 
 void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
