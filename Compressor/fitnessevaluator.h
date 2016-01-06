@@ -14,6 +14,8 @@ namespace lossycompressor {
 		int sourceDataRowWidthInBytes;
 
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram) = 0;
+
+		virtual bool isCuda() = 0;
 	public:
 		FitnessEvaluator(int sourceWidth, int sourceHeight,
 			int diagramPointsCount, 

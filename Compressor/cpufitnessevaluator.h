@@ -31,6 +31,8 @@ namespace lossycompressor {
 
 	protected:
 		virtual float calculateFitnessInternal(VoronoiDiagram * diagram);
+
+		virtual bool isCuda();
 	public:
 		CpuFitnessEvaluator(int sourceWidth, int sourceHeight, 
 			int diagramPointsCount, 

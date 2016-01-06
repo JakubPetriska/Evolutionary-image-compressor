@@ -336,3 +336,7 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	CHECK_ERROR(cudaMemcpy(&fitness, devFitness, sizeof(float), cudaMemcpyDeviceToHost));
 	return fitness / (sourceWidth * sourceHeight);
 }
+
+bool CudaFitnessEvaluator::isCuda() {
+	return true;
+}

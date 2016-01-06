@@ -179,3 +179,7 @@ int CpuFitnessEvaluator::findClosestHorizontalPoint(VoronoiDiagram * diagram, in
 		return end;
 	}
 }
+
+bool CpuFitnessEvaluator::isCuda() {
+	return false;
+}
