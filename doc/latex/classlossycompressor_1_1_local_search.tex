@@ -1,0 +1,42 @@
+\hypertarget{classlossycompressor_1_1_local_search}{}\section{lossycompressor\+:\+:Local\+Search Class Reference}
+\label{classlossycompressor_1_1_local_search}\index{lossycompressor\+::\+Local\+Search@{lossycompressor\+::\+Local\+Search}}
+
+
+Uses hill-\/climbing to come up with best position of diagram points.  
+
+
+
+
+{\ttfamily \#include $<$localsearch.\+h$>$}
+
+Inheritance diagram for lossycompressor\+:\+:Local\+Search\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classlossycompressor_1_1_local_search}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Local\+Search} (\hyperlink{structlossycompressor_1_1_compressor_algorithm_1_1_args}{Compressor\+Algorithm\+::\+Args} $\ast$\hyperlink{classlossycompressor_1_1_compressor_algorithm_a7cec23bc2a41ac35617e21466a2f0c46}{args})\hypertarget{classlossycompressor_1_1_local_search_a485d8d669395cf70638829f24dacea40}{}\label{classlossycompressor_1_1_local_search_a485d8d669395cf70638829f24dacea40}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classlossycompressor_1_1_local_search_a3531b177402f98c172e412333310ec58}{tweak} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$source, \hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$destination)\hypertarget{classlossycompressor_1_1_local_search_a3531b177402f98c172e412333310ec58}{}\label{classlossycompressor_1_1_local_search_a3531b177402f98c172e412333310ec58}
+
+\begin{DoxyCompactList}\small\item\em Tweaks the source diagram and copies it into destination diagram. \end{DoxyCompactList}\item 
+virtual int \hyperlink{classlossycompressor_1_1_local_search_a23f2fb30df43d1166c1a2340e79cda06}{compress\+Internal} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$output\+Diagram, \hyperlink{structlossycompressor_1_1_color24bit}{Color24bit} $\ast$colors, int $\ast$pixel\+Point\+Assignment) override\hypertarget{classlossycompressor_1_1_local_search_a23f2fb30df43d1166c1a2340e79cda06}{}\label{classlossycompressor_1_1_local_search_a23f2fb30df43d1166c1a2340e79cda06}
+
+\begin{DoxyCompactList}\small\item\em Implement this method to provide the compression calculation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Uses hill-\/climbing to come up with best position of diagram points. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Compressor/localsearch.\+h\item 
+Compressor/localsearch.\+cpp\end{DoxyCompactItemize}

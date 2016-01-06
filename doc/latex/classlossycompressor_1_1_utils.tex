@@ -1,0 +1,83 @@
+\hypertarget{classlossycompressor_1_1_utils}{}\section{lossycompressor\+:\+:Utils Class Reference}
+\label{classlossycompressor_1_1_utils}\index{lossycompressor\+::\+Utils@{lossycompressor\+::\+Utils}}
+
+
+Contains general utility methods.  
+
+
+
+
+{\ttfamily \#include $<$utils.\+h$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{classlossycompressor_1_1_utils_a23beba13407961e8db9a9efac0b8780f}{swap} (int32\+\_\+t $\ast$arr, int first\+Index, int second\+Index)\hypertarget{classlossycompressor_1_1_utils_a23beba13407961e8db9a9efac0b8780f}{}\label{classlossycompressor_1_1_utils_a23beba13407961e8db9a9efac0b8780f}
+
+\begin{DoxyCompactList}\small\item\em Swap two data items in an array. \end{DoxyCompactList}\item 
+static int \hyperlink{classlossycompressor_1_1_utils_adf879284f3bd313d718228dba638a81b}{max} (int first, int second)\hypertarget{classlossycompressor_1_1_utils_adf879284f3bd313d718228dba638a81b}{}\label{classlossycompressor_1_1_utils_adf879284f3bd313d718228dba638a81b}
+
+\begin{DoxyCompactList}\small\item\em Return the greater value out of the two argument. \end{DoxyCompactList}\item 
+static double \hyperlink{classlossycompressor_1_1_utils_a3d136b63cc748174616feefd2340dcab}{calculate\+Square\+Distance} (int firstX, int firstY, int secondX, int secondY)
+\begin{DoxyCompactList}\small\item\em Calculate squared distance between the two points. \end{DoxyCompactList}\item 
+static void \hyperlink{classlossycompressor_1_1_utils_a43e36268d9b4f77989190d5a7b36485c}{record\+Time} (L\+A\+R\+G\+E\+\_\+\+I\+N\+T\+E\+G\+ER $\ast$event)
+\begin{DoxyCompactList}\small\item\em Record current time using the Windows A\+PI. \end{DoxyCompactList}\item 
+static double \hyperlink{classlossycompressor_1_1_utils_a1b60e219b809c694aa9ca980288fc618}{calculate\+Interval} (L\+A\+R\+G\+E\+\_\+\+I\+N\+T\+E\+G\+ER $\ast$start, L\+A\+R\+G\+E\+\_\+\+I\+N\+T\+E\+G\+ER $\ast$end)\hypertarget{classlossycompressor_1_1_utils_a1b60e219b809c694aa9ca980288fc618}{}\label{classlossycompressor_1_1_utils_a1b60e219b809c694aa9ca980288fc618}
+
+\begin{DoxyCompactList}\small\item\em Calculate time interval between two events. \end{DoxyCompactList}\item 
+static int \hyperlink{classlossycompressor_1_1_utils_a906f479a554b2b819d6116155b3efb1d}{generate\+Random} (int \hyperlink{classlossycompressor_1_1_utils_adf879284f3bd313d718228dba638a81b}{max})\hypertarget{classlossycompressor_1_1_utils_a906f479a554b2b819d6116155b3efb1d}{}\label{classlossycompressor_1_1_utils_a906f479a554b2b819d6116155b3efb1d}
+
+\begin{DoxyCompactList}\small\item\em Generate random integer between and max inclusive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains general utility methods. 
+
+\subsection{Member Function Documentation}
+\index{lossycompressor\+::\+Utils@{lossycompressor\+::\+Utils}!calculate\+Square\+Distance@{calculate\+Square\+Distance}}
+\index{calculate\+Square\+Distance@{calculate\+Square\+Distance}!lossycompressor\+::\+Utils@{lossycompressor\+::\+Utils}}
+\subsubsection[{\texorpdfstring{calculate\+Square\+Distance(int first\+X, int first\+Y, int second\+X, int second\+Y)}{calculateSquareDistance(int firstX, int firstY, int secondX, int secondY)}}]{\setlength{\rightskip}{0pt plus 5cm}double Utils\+::calculate\+Square\+Distance (
+\begin{DoxyParamCaption}
+\item[{int}]{firstX, }
+\item[{int}]{firstY, }
+\item[{int}]{secondX, }
+\item[{int}]{secondY}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classlossycompressor_1_1_utils_a3d136b63cc748174616feefd2340dcab}{}\label{classlossycompressor_1_1_utils_a3d136b63cc748174616feefd2340dcab}
+
+
+Calculate squared distance between the two points. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em firstX} & X coordinate of the first point. \\
+\hline
+\mbox{\tt in}  & {\em firstY} & Y coordinate of the first point. \\
+\hline
+\mbox{\tt in}  & {\em secondX} & X coordinate of the second point. \\
+\hline
+\mbox{\tt in}  & {\em secondY} & Y coordinate of the second point. \\
+\hline
+\end{DoxyParams}
+\index{lossycompressor\+::\+Utils@{lossycompressor\+::\+Utils}!record\+Time@{record\+Time}}
+\index{record\+Time@{record\+Time}!lossycompressor\+::\+Utils@{lossycompressor\+::\+Utils}}
+\subsubsection[{\texorpdfstring{record\+Time(\+L\+A\+R\+G\+E\+\_\+\+I\+N\+T\+E\+G\+E\+R $\ast$event)}{recordTime(LARGE_INTEGER *event)}}]{\setlength{\rightskip}{0pt plus 5cm}void Utils\+::record\+Time (
+\begin{DoxyParamCaption}
+\item[{L\+A\+R\+G\+E\+\_\+\+I\+N\+T\+E\+G\+ER $\ast$}]{event}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classlossycompressor_1_1_utils_a43e36268d9b4f77989190d5a7b36485c}{}\label{classlossycompressor_1_1_utils_a43e36268d9b4f77989190d5a7b36485c}
+
+
+Record current time using the Windows A\+PI. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em event} & Variable pointer into which current time will be recorded. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Compressor/utils.\+h\item 
+Compressor/utils.\+cpp\end{DoxyCompactItemize}

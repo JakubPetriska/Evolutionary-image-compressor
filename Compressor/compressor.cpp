@@ -16,12 +16,12 @@ int Compressor::compress() {
 	CompressorAlgorithm * compressAlgorithm;
 
 	// Prepare the arguments for compression algorithm
-	CompressorAlgorithmArgs compressorAlgorithmArgs;
+	CompressorAlgorithm::Args compressorAlgorithmArgs;
 	compressorAlgorithmArgs.sourceWidth = sourceWidth;
 	compressorAlgorithmArgs.sourceHeight = sourceHeight;
 	compressorAlgorithmArgs.sourceImageData = sourceImageData;
 	compressorAlgorithmArgs.sourceDataRowWidthInBytes = rowWidthInBytes;
-	compressorAlgorithmArgs.limitByTime = args->computationLimit == ComputationLimit::TIME;
+	compressorAlgorithmArgs.limitByTime = args->computationLimit == Compressor::ComputationLimit::TIME;
 	compressorAlgorithmArgs.maxComputationTimeSecs = args->maxComputationTimeSecs;
 	compressorAlgorithmArgs.maxFitnessEvaluationCount = args->maxFitnessEvaluationCount;
 	compressorAlgorithmArgs.useCuda = args->useCuda;

@@ -16,7 +16,7 @@ FitnessEvaluator::FitnessEvaluator(
 
 FitnessEvaluator::~FitnessEvaluator() {}
 
-double fitnessCalculationLengthsSum = 0;
+//double fitnessCalculationLengthsSum = 0;
 
 float FitnessEvaluator::calculateFitness(VoronoiDiagram * diagram) {
 	//LARGE_INTEGER startTime, endTime;

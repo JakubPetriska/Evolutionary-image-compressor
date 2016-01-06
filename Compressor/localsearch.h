@@ -3,18 +3,14 @@
 #include "compressoralgorithm.h"
 
 namespace lossycompressor {
-	/*
-	Algorithm uses hill-climbing to come up with best position of diagram points.
-	*/
+	/// Uses hill-climbing to come up with best position of diagram points.
 	class LocalSearch : public CompressorAlgorithm {
 		const int MAX_POINT_TO_TWEAK_TRIAL_COUNT = 10;
 	protected:
-		/*
-		Copies source diagram into destination while tweaking it.
-		*/
+		/// Tweaks the source diagram and copies it into destination diagram.
 		void tweak(VoronoiDiagram * source, VoronoiDiagram * destination);
 	public:
-		LocalSearch(CompressorAlgorithmArgs* args)
+		LocalSearch(CompressorAlgorithm::Args* args)
 			: CompressorAlgorithm(args) {};
 
 	protected:

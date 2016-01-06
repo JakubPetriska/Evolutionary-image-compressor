@@ -1,0 +1,57 @@
+\hypertarget{classlossycompressor_1_1_compressor_utils}{}\section{lossycompressor\+:\+:Compressor\+Utils Class Reference}
+\label{classlossycompressor_1_1_compressor_utils}\index{lossycompressor\+::\+Compressor\+Utils@{lossycompressor\+::\+Compressor\+Utils}}
+
+
+Contains utility methods used in compression.  
+
+
+
+
+{\ttfamily \#include $<$compressorutils.\+h$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{classlossycompressor_1_1_compressor_utils_a5b0e35fe3f5907d16f354be1ae986cd5}{copy\+Point} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$source, \hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$destination, int index)\hypertarget{classlossycompressor_1_1_compressor_utils_a5b0e35fe3f5907d16f354be1ae986cd5}{}\label{classlossycompressor_1_1_compressor_utils_a5b0e35fe3f5907d16f354be1ae986cd5}
+
+\begin{DoxyCompactList}\small\item\em Copy point on given index from source diagram into the destionation diagram. \end{DoxyCompactList}\item 
+static void \hyperlink{classlossycompressor_1_1_compressor_utils_add0142376a99e9c052b6b9abfa4ec750}{copy} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$source, \hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$destination)\hypertarget{classlossycompressor_1_1_compressor_utils_add0142376a99e9c052b6b9abfa4ec750}{}\label{classlossycompressor_1_1_compressor_utils_add0142376a99e9c052b6b9abfa4ec750}
+
+\begin{DoxyCompactList}\small\item\em Copy the source diagram into the destionation diagram. \end{DoxyCompactList}\item 
+static void \hyperlink{classlossycompressor_1_1_compressor_utils_a8115bf54770caaa0a345daccd29542c9}{generate\+Random\+Diagram} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$output, int32\+\_\+t source\+Width, int32\+\_\+t source\+Height)\hypertarget{classlossycompressor_1_1_compressor_utils_a8115bf54770caaa0a345daccd29542c9}{}\label{classlossycompressor_1_1_compressor_utils_a8115bf54770caaa0a345daccd29542c9}
+
+\begin{DoxyCompactList}\small\item\em Generates random diagram. \end{DoxyCompactList}\item 
+static void \hyperlink{classlossycompressor_1_1_compressor_utils_a06515562c64990788ecba2f071b553e8}{swap} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$$\ast$first, \hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$$\ast$second)\hypertarget{classlossycompressor_1_1_compressor_utils_a06515562c64990788ecba2f071b553e8}{}\label{classlossycompressor_1_1_compressor_utils_a06515562c64990788ecba2f071b553e8}
+
+\begin{DoxyCompactList}\small\item\em Swap two diagrams on given pointers. \end{DoxyCompactList}\item 
+static int \hyperlink{classlossycompressor_1_1_compressor_utils_a085da7676dfff941451b92c50359b14b}{compare} (\hyperlink{structlossycompressor_1_1_voronoi_diagram}{Voronoi\+Diagram} $\ast$diagram, int first\+Point\+Index, int second\+Point\+Index)\hypertarget{classlossycompressor_1_1_compressor_utils_a085da7676dfff941451b92c50359b14b}{}\label{classlossycompressor_1_1_compressor_utils_a085da7676dfff941451b92c50359b14b}
+
+\begin{DoxyCompactList}\small\item\em Returns the same values as compare(int32\+\_\+t, int32\+\_\+t, int32\+\_\+t, int32\+\_\+t). \end{DoxyCompactList}\item 
+static int \hyperlink{classlossycompressor_1_1_compressor_utils_ae85a980244d3f1b8c15c9552716afcdb}{compare} (int firstX, int firstY, int secondX, int secondY)
+\begin{DoxyCompactList}\small\item\em Compare two points on X axis. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains utility methods used in compression. 
+
+\subsection{Member Function Documentation}
+\index{lossycompressor\+::\+Compressor\+Utils@{lossycompressor\+::\+Compressor\+Utils}!compare@{compare}}
+\index{compare@{compare}!lossycompressor\+::\+Compressor\+Utils@{lossycompressor\+::\+Compressor\+Utils}}
+\subsubsection[{\texorpdfstring{compare(int first\+X, int first\+Y, int second\+X, int second\+Y)}{compare(int firstX, int firstY, int secondX, int secondY)}}]{\setlength{\rightskip}{0pt plus 5cm}int Compressor\+Utils\+::compare (
+\begin{DoxyParamCaption}
+\item[{int}]{firstX, }
+\item[{int}]{firstY, }
+\item[{int}]{secondX, }
+\item[{int}]{secondY}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classlossycompressor_1_1_compressor_utils_ae85a980244d3f1b8c15c9552716afcdb}{}\label{classlossycompressor_1_1_compressor_utils_ae85a980244d3f1b8c15c9552716afcdb}
+
+
+Compare two points on X axis. 
+
+Returns number $<$ 0 if first point x coordinate is smaller than second point\textquotesingle{}s x coordinate or x coordinates are equal and first point\textquotesingle{}s y coordinate is smaller than second point\textquotesingle{}s y coordinate. Returns 0 if points are equal, otherwise returns number $>$ 0. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Compressor/compressorutils.\+h\item 
+Compressor/compressorutils.\+cpp\end{DoxyCompactItemize}

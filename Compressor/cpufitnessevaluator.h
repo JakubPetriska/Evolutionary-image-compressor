@@ -5,6 +5,8 @@
 #include "color.h"
 
 namespace lossycompressor {
+
+	/// Calculates fitness using only CPU.
 	class CpuFitnessEvaluator : public FitnessEvaluator {
 		float * rSums;
 		int * rCounts;
@@ -40,9 +42,7 @@ namespace lossycompressor {
 
 		~CpuFitnessEvaluator();
 
-		/*
-		Calculates average colors of all points in diagram into the colors array.
-		*/
+		/// Calculates average colors of all points in diagram into the colors array.
 		void calculateColors(VoronoiDiagram * diagram,
 			Color24bit * colors,
 			int * pixelPointAssignment);

@@ -1,0 +1,55 @@
+\hypertarget{structlossycompressor_1_1_compressor_1_1_args}{}\section{lossycompressor\+:\+:Compressor\+:\+:Args Struct Reference}
+\label{structlossycompressor_1_1_compressor_1_1_args}\index{lossycompressor\+::\+Compressor\+::\+Args@{lossycompressor\+::\+Compressor\+::\+Args}}
+
+
+Instance of this class is passed as a parameter into \hyperlink{classlossycompressor_1_1_compressor}{Compressor}. Contains compression input data and compression settings.  
+
+
+
+
+{\ttfamily \#include $<$compressor.\+h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$ \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a2cb45124864a302e76798205a80b4e42}{source\+Image\+Path}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a2cb45124864a302e76798205a80b4e42}{}\label{structlossycompressor_1_1_compressor_1_1_args_a2cb45124864a302e76798205a80b4e42}
+
+\begin{DoxyCompactList}\small\item\em Path of the source image. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a07d888c22c98877258a86ab6f3a81cbf}{destination\+Compressed\+Path}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a07d888c22c98877258a86ab6f3a81cbf}{}\label{structlossycompressor_1_1_compressor_1_1_args_a07d888c22c98877258a86ab6f3a81cbf}
+
+\begin{DoxyCompactList}\small\item\em Output path of the compressed file. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a66e5c194211355e8bd431c075301f2bd}{destination\+Image\+Path}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a66e5c194211355e8bd431c075301f2bd}{}\label{structlossycompressor_1_1_compressor_1_1_args_a66e5c194211355e8bd431c075301f2bd}
+
+\begin{DoxyCompactList}\small\item\em Output path of the image file reconstructed from the compressed file. \end{DoxyCompactList}\item 
+uint32\+\_\+t \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a9d2e5cd2737fdcffb1798d64899bf8b1}{max\+Compressed\+Size\+Bytes}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a9d2e5cd2737fdcffb1798d64899bf8b1}{}\label{structlossycompressor_1_1_compressor_1_1_args_a9d2e5cd2737fdcffb1798d64899bf8b1}
+
+\begin{DoxyCompactList}\small\item\em Maximum size of compressed file in bytes. \end{DoxyCompactList}\item 
+\hyperlink{classlossycompressor_1_1_compressor_a17846b94a7f3efe3f0a80b3b28ec46f0}{Computation\+Type} \hyperlink{structlossycompressor_1_1_compressor_1_1_args_af299abdc3a9ad17d9ddfc84b3d9cab6a}{computation\+Type} = Computation\+Type\+::\+L\+O\+C\+A\+L\+\_\+\+S\+E\+A\+R\+CH\hypertarget{structlossycompressor_1_1_compressor_1_1_args_af299abdc3a9ad17d9ddfc84b3d9cab6a}{}\label{structlossycompressor_1_1_compressor_1_1_args_af299abdc3a9ad17d9ddfc84b3d9cab6a}
+
+\begin{DoxyCompactList}\small\item\em Type of computation. \end{DoxyCompactList}\item 
+\hyperlink{classlossycompressor_1_1_compressor_aae4947e887bbd9773bd2ceb47363d4f1}{Computation\+Limit} \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a2fd0894279a2a55e1b905f06f6545aac}{computation\+Limit} = Computation\+Limit\+::\+T\+I\+ME\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a2fd0894279a2a55e1b905f06f6545aac}{}\label{structlossycompressor_1_1_compressor_1_1_args_a2fd0894279a2a55e1b905f06f6545aac}
+
+\begin{DoxyCompactList}\small\item\em Type of computation limit. \end{DoxyCompactList}\item 
+double \hyperlink{structlossycompressor_1_1_compressor_1_1_args_abf76291aa3631cf622dbefefad2c796c}{max\+Computation\+Time\+Secs} = 60\hypertarget{structlossycompressor_1_1_compressor_1_1_args_abf76291aa3631cf622dbefefad2c796c}{}\label{structlossycompressor_1_1_compressor_1_1_args_abf76291aa3631cf622dbefefad2c796c}
+
+\begin{DoxyCompactList}\small\item\em Time computation limit. \end{DoxyCompactList}\item 
+int \hyperlink{structlossycompressor_1_1_compressor_1_1_args_ab37df21b0593052f67e4244593def7d2}{max\+Fitness\+Evaluation\+Count}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_ab37df21b0593052f67e4244593def7d2}{}\label{structlossycompressor_1_1_compressor_1_1_args_ab37df21b0593052f67e4244593def7d2}
+
+\begin{DoxyCompactList}\small\item\em Limit on fitness evaluation/. \end{DoxyCompactList}\item 
+bool \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a9581f3e425fe29d33b9424176a9cde4d}{use\+Cuda} = false\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a9581f3e425fe29d33b9424176a9cde4d}{}\label{structlossycompressor_1_1_compressor_1_1_args_a9581f3e425fe29d33b9424176a9cde4d}
+
+\begin{DoxyCompactList}\small\item\em True if C\+U\+DA acceleration should be used, false otherwise. \end{DoxyCompactList}\item 
+char $\ast$ \hyperlink{structlossycompressor_1_1_compressor_1_1_args_afc7c4a50ef9ce91ce0d9408f7de9e5e4}{log\+File\+Name} = N\+U\+LL\hypertarget{structlossycompressor_1_1_compressor_1_1_args_afc7c4a50ef9ce91ce0d9408f7de9e5e4}{}\label{structlossycompressor_1_1_compressor_1_1_args_afc7c4a50ef9ce91ce0d9408f7de9e5e4}
+
+\begin{DoxyCompactList}\small\item\em Path to file into which log of fitness values will be written. Log will be appended to the end of this file. No log will be written if pointer is equal to N\+U\+LL. \end{DoxyCompactList}\item 
+bool \hyperlink{structlossycompressor_1_1_compressor_1_1_args_a995412fa423ab75e01215136e90435cd}{log\+Improvement\+To\+Console}\hypertarget{structlossycompressor_1_1_compressor_1_1_args_a995412fa423ab75e01215136e90435cd}{}\label{structlossycompressor_1_1_compressor_1_1_args_a995412fa423ab75e01215136e90435cd}
+
+\begin{DoxyCompactList}\small\item\em True if computation should log current fitness into console, false otherwise. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Instance of this class is passed as a parameter into \hyperlink{classlossycompressor_1_1_compressor}{Compressor}. Contains compression input data and compression settings. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Compressor/compressor.\+h\end{DoxyCompactItemize}

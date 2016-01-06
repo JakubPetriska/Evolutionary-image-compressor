@@ -5,6 +5,8 @@
 #include "color.h"
 
 namespace lossycompressor {
+
+	/// Calculates fitness. The calculation is accelerated by CUDA.
 	class CudaFitnessEvaluator : public FitnessEvaluator {
 		int diagramPointsCoordinatesSize;
 		

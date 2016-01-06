@@ -141,6 +141,7 @@
     <ClCompile Include="Compressor\voronoidiagram.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Compressor\color.h" />
     <ClInclude Include="Compressor\compressor.h" />
     <ClInclude Include="Compressor\compressoralgorithm.h" />
     <ClInclude Include="Compressor\compressorutils.h" />

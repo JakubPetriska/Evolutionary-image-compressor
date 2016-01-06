@@ -3,9 +3,7 @@
 #include "evolutionaryalgorithm.h"
 
 namespace lossycompressor {
-	/*
-	Uses memetic algorithm to come up with best position of diagram points.
-	*/
+	/// Uses memetic algorithm to come up with best position of diagram points.
 	class MemeticAlgorithm : public EvolutionaryAlgorithm {
 		const int POPULATION_SIZE = 10;
 
@@ -20,7 +18,7 @@ namespace lossycompressor {
 			Color24bit * colors,
 			int * pixelPointAssignment) override;
 	public:
-		MemeticAlgorithm(CompressorAlgorithmArgs* args)
+		MemeticAlgorithm(CompressorAlgorithm::Args* args)
 			: EvolutionaryAlgorithm(args) {};
 	};
 }

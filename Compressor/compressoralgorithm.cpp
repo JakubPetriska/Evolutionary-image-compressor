@@ -6,7 +6,7 @@
 using namespace std;
 using namespace lossycompressor;
 
-CompressorAlgorithm::CompressorAlgorithm(CompressorAlgorithmArgs* args)
+CompressorAlgorithm::CompressorAlgorithm(CompressorAlgorithm::Args* args)
 : args(args) {
 	cpuFitnessEvaluator = new CpuFitnessEvaluator(
 		args->sourceWidth, 
