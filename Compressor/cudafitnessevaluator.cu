@@ -209,7 +209,7 @@ __global__ void calculateColorsSumsKernel(
 	int pixelHorizontal = blockIdx.x * blockDim.x + threadIdx.x;
 	int pixelVertical = blockIdx.y * blockDim.y + threadIdx.y;
 
-	// If pixel of this thread is in images
+	// If pixel of this thread is in the image
 	if (pixelHorizontal < sourceWidth && pixelVertical < sourceHeight) {
 		int linearIndex = pixelHorizontal + sourceWidth * pixelVertical;
 		int colorStartIndexInSourceData = pixelHorizontal * 3 + pixelVertical * sourceDataRowWidthInBytes;

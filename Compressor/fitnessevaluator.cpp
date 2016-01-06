@@ -19,18 +19,18 @@ FitnessEvaluator::~FitnessEvaluator() {}
 double fitnessCalculationLengthsSum = 0;
 
 float FitnessEvaluator::calculateFitness(VoronoiDiagram * diagram) {
-	//LARGE_INTEGER startTime, endTime;
-	//Utils::recordTime(&startTime);
+	LARGE_INTEGER startTime, endTime;
+	Utils::recordTime(&startTime);
 	
 	++fitnessEvaluationsCount;
 	float fitness = calculateFitnessInternal(diagram);
 
-	//Utils::recordTime(&endTime);
-	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
+	Utils::recordTime(&endTime);
+	double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
 
-	//fitnessCalculationLengthsSum += calculationTotalTime;
-	//std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n", 
-	//	calculationTotalTime, fitnessCalculationLengthsSum / fitnessEvaluationsCount);
+	fitnessCalculationLengthsSum += calculationTotalTime;
+	std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n", 
+		calculationTotalTime, fitnessCalculationLengthsSum / fitnessEvaluationsCount);
 
 	return fitness;
 }

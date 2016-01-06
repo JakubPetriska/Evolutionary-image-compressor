@@ -30,7 +30,7 @@ int doTestIteration(ComputationType computationType, char * logFileName) {
 	compressorArgs.computationType = computationType;
 	compressorArgs.computationLimit = ComputationLimit::FITNESS_COUNT;
 	compressorArgs.maxComputationTimeSecs = 60 * 10;
-	compressorArgs.maxFitnessEvaluationCount = 50000;
+	compressorArgs.maxFitnessEvaluationCount = 30;
 	compressorArgs.useCuda = true;
 	compressorArgs.logFileName = logFileName;
 	compressorArgs.logImprovementToConsole = false;
