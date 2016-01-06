@@ -279,6 +279,12 @@ __global__ void calculateFitnessKernel(
 }
 
 float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
+	//cudaEvent_t start, middle, stop;
+	//cudaEventCreate(&start);
+	//cudaEventCreate(&middle);
+	//cudaEventCreate(&stop);
+
+	
 	float * devFitness;
 	CHECK_ERROR(cudaMalloc((void**)&devFitness, sizeof(float)));
 	CHECK_ERROR(cudaMemset((void*)devFitness, 0, sizeof(float)));
@@ -311,12 +317,20 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 		sourceWidth, sourceHeight,
 		rSums, rCounts, gSums, gCounts, bSums, bCounts);
 
+
+	//cudaEventRecord(start, 0);
+
+
 	calculateColorsSumsKernel << <everyPixelBlocks, everyPixelThreads >> >(
 		devDiagram, diagramPointsCount,
 		sourceWidth, sourceHeight,
 		devSourceImageData, sourceDataRowWidthInBytes,
 		rSums, rCounts, gSums, gCounts, bSums, bCounts,
 		pixelPointAssignment);
+
+
+	//cudaEventRecord(middle, 0);
+
 
 	calculateColorsKernel << <everyPointBlocksCount, everyPointThreadCount >> >(
 		diagramPointsCount,
@@ -334,6 +348,21 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	// Copy back result fitness
 	float fitness = 0;
 	CHECK_ERROR(cudaMemcpy(&fitness, devFitness, sizeof(float), cudaMemcpyDeviceToHost));
+
+	
+	//cudaEventRecord(stop, 0);
+	//cudaEventSynchronize(stop);
+	//float elapsedTimeToMiddle;
+	//float elapsedTimeAfterMiddle;
+	//cudaEventElapsedTime(&elapsedTimeToMiddle, start, middle);
+	//cudaEventElapsedTime(&elapsedTimeAfterMiddle, middle, stop);
+	//printf("%3.1f %3.1f\n", elapsedTimeToMiddle, elapsedTimeAfterMiddle);
+	//// zrušení událostí start a stop
+	//cudaEventDestroy(start);
+	//cudaEventDestroy(middle);
+	//cudaEventDestroy(stop);
+
+	
 	return fitness / (sourceWidth * sourceHeight);
 }
 

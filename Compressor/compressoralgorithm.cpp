@@ -36,14 +36,14 @@ CompressorAlgorithm::~CompressorAlgorithm() {
 }
 
 float CompressorAlgorithm::calculateFitness(VoronoiDiagram * diagram) {
-	//float fitness = fitnessEvaluator->calculateFitness(diagram);
-	//onIteration(fitness);
-	//return fitness;
-	float cudaFitness = fitnessEvaluator->calculateFitness(diagram);
-	float cpuFitness = cpuFitnessEvaluator->calculateFitness(diagram);
-	printf("%f %f %f\n", cudaFitness, cpuFitness, cudaFitness - cpuFitness);
-	onIteration(cudaFitness);
-	return cudaFitness;
+	float fitness = fitnessEvaluator->calculateFitness(diagram);
+	onIteration(fitness);
+	return fitness;
+	//float cudaFitness = fitnessEvaluator->calculateFitness(diagram);
+	//float cpuFitness = cpuFitnessEvaluator->calculateFitness(diagram);
+	//printf("%f %f %f\n", cudaFitness, cpuFitness, cudaFitness - cpuFitness);
+	//onIteration(cudaFitness);
+	//return cudaFitness;
 }
 
 int CompressorAlgorithm::compress(VoronoiDiagram * outputDiagram,
