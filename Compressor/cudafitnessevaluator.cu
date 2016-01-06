@@ -27,11 +27,9 @@ CudaFitnessEvaluator::CudaFitnessEvaluator(
 	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData, sourceDataRowWidthInBytes) {
 
 	CHECK_ERROR(cudaMalloc((void**)&rSums, diagramPointsCount*sizeof(float)));
-	CHECK_ERROR(cudaMalloc((void**)&rCounts, diagramPointsCount*sizeof(int)));
 	CHECK_ERROR(cudaMalloc((void**)&gSums, diagramPointsCount*sizeof(float)));
-	CHECK_ERROR(cudaMalloc((void**)&gCounts, diagramPointsCount*sizeof(int)));
 	CHECK_ERROR(cudaMalloc((void**)&bSums, diagramPointsCount*sizeof(float)));
-	CHECK_ERROR(cudaMalloc((void**)&bCounts, diagramPointsCount*sizeof(int)));
+	CHECK_ERROR(cudaMalloc((void**)&pixelPerPointCounts, diagramPointsCount*sizeof(int)));
 
 	CHECK_ERROR(cudaMalloc((void**)&colors, diagramPointsCount*sizeof(Color24bit)));
 	CHECK_ERROR(cudaMalloc((void**)&pixelPointAssignment, sourceHeight*sourceWidth*sizeof(int)));
@@ -174,20 +172,16 @@ __global__ void resetWorkVarsKernel(
 	int sourceWidth,
 	int sourceHeight,
 	float * rSums,
-	int * rCounts,
 	float * gSums,
-	int * gCounts,
 	float * bSums,
-	int * bCounts) {
+	int * pixelPerPointCounts) {
 
 	int index = threadIdx.x + blockIdx.x * blockDim.x;
 	if (index < diagramPointsCount) {
 		rSums[index] = 0;
-		rCounts[index] = 0;
 		gSums[index] = 0;
-		gCounts[index] = 0;
 		bSums[index] = 0;
-		bCounts[index] = 0;
+		pixelPerPointCounts[index] = 0;
 	}
 }
 
@@ -199,11 +193,9 @@ __global__ void calculateColorsSumsKernel(
 	uint8_t * devSourceImageData,
 	int sourceDataRowWidthInBytes,
 	float * rSums,
-	int * rCounts,
 	float * gSums,
-	int * gCounts,
 	float * bSums,
-	int * bCounts,
+	int * pixelPerPointCounts,
 	int * pixelPointAssignment) {
 
 	int pixelHorizontal = blockIdx.x * blockDim.x + threadIdx.x;
@@ -220,11 +212,9 @@ __global__ void calculateColorsSumsKernel(
 		pixelPointAssignment[linearIndex] = pointIndex;
 
 		atomicAdd(bSums + pointIndex, devSourceImageData[colorStartIndexInSourceData]);
-		atomicAdd(bCounts + pointIndex, 1);
 		atomicAdd(gSums + pointIndex, devSourceImageData[colorStartIndexInSourceData + 1]);
-		atomicAdd(gCounts + pointIndex, 1);
 		atomicAdd(rSums + pointIndex, devSourceImageData[colorStartIndexInSourceData + 2]);
-		atomicAdd(rCounts + pointIndex, 1);
+		atomicAdd(pixelPerPointCounts + pointIndex, 1);
 	}
 }
 
@@ -233,19 +223,17 @@ __global__ void calculateColorsKernel(
 	int sourceWidth,
 	int sourceHeight,
 	float * rSums,
-	int * rCounts,
 	float * gSums,
-	int * gCounts,
 	float * bSums,
-	int * bCounts,
+	int * pixelPerPointCounts,
 	Color24bit * colors) {
 
 	int index = threadIdx.x + blockIdx.x * blockDim.x;
 	if (index < diagramPointsCount) {
 		Color24bit * color = &colors[index];
-		color->b = (uint8_t)(bSums[index] / bCounts[index] + 0.5);
-		color->g = (uint8_t)(gSums[index] / gCounts[index] + 0.5);
-		color->r = (uint8_t)(rSums[index] / rCounts[index] + 0.5);
+		color->b = (uint8_t)(bSums[index] / pixelPerPointCounts[index] + 0.5);
+		color->g = (uint8_t)(gSums[index] / pixelPerPointCounts[index] + 0.5);
+		color->r = (uint8_t)(rSums[index] / pixelPerPointCounts[index] + 0.5);
 	}
 }
 
@@ -315,7 +303,7 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	resetWorkVarsKernel << <everyPointBlocksCount, everyPointThreadCount >> >(
 		diagramPointsCount,
 		sourceWidth, sourceHeight,
-		rSums, rCounts, gSums, gCounts, bSums, bCounts);
+		rSums, gSums, bSums, pixelPerPointCounts);
 
 
 	//cudaEventRecord(start, 0);
@@ -325,7 +313,7 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 		devDiagram, diagramPointsCount,
 		sourceWidth, sourceHeight,
 		devSourceImageData, sourceDataRowWidthInBytes,
-		rSums, rCounts, gSums, gCounts, bSums, bCounts,
+		rSums, gSums, bSums, pixelPerPointCounts,
 		pixelPointAssignment);
 
 
@@ -335,7 +323,7 @@ float CudaFitnessEvaluator::calculateFitnessInternal(VoronoiDiagram * diagram) {
 	calculateColorsKernel << <everyPointBlocksCount, everyPointThreadCount >> >(
 		diagramPointsCount,
 		sourceWidth, sourceHeight,
-		rSums, rCounts, gSums, gCounts, bSums, bCounts,
+		rSums, gSums, bSums, pixelPerPointCounts,
 		colors);
 
 	calculateFitnessKernel << <everyPixelBlocks, everyPixelThreads >> >(

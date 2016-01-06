@@ -14,21 +14,16 @@ CpuFitnessEvaluator::CpuFitnessEvaluator(
 	uint8_t * sourceImageData, int sourceDataRowWidthInBytes)
 	: FitnessEvaluator(sourceWidth, sourceHeight, diagramPointsCount, sourceImageData, sourceDataRowWidthInBytes),
 	rSums(new float[diagramPointsCount]),
-	rCounts(new int[diagramPointsCount]),
 	gSums(new float[diagramPointsCount]),
-	gCounts(new int[diagramPointsCount]),
 	bSums(new float[diagramPointsCount]),
-	bCounts(new int[diagramPointsCount]),
+	pixelPerPointCounts(new int[diagramPointsCount]),
 	colorsTmp(new Color24bit[diagramPointsCount]),
 	pixelPointAssignment(new int[sourceHeight * sourceWidth]) {};
 
 CpuFitnessEvaluator::~CpuFitnessEvaluator() {
 	delete[] rSums;
-	delete[] rCounts;
 	delete[] gSums;
-	delete[] gCounts;
 	delete[] bSums;
-	delete[] bCounts;
 	delete[] colorsTmp;
 	delete[] pixelPointAssignment;
 }
@@ -60,11 +55,9 @@ void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 
 	for (int i = 0; i < diagramPointsCount; ++i) {
 		rSums[i] = 0;
-		rCounts[i] = 0;
 		gSums[i] = 0;
-		gCounts[i] = 0;
 		bSums[i] = 0;
-		bCounts[i] = 0;
+		pixelPerPointCounts[i] = 0;
 	}
 
 	for (int i = 0; i < sourceWidth; ++i) {
@@ -75,19 +68,17 @@ void CpuFitnessEvaluator::calculateColors(VoronoiDiagram * diagram,
 
 			int colorStartIndexInSourceData = i * 3 + j * sourceDataRowWidthInBytes;
 			bSums[pointIndex] += sourceImageData[colorStartIndexInSourceData];
-			bCounts[pointIndex] += 1;
 			gSums[pointIndex] += sourceImageData[colorStartIndexInSourceData + 1];
-			gCounts[pointIndex] += 1;
 			rSums[pointIndex] += sourceImageData[colorStartIndexInSourceData + 2];
-			rCounts[pointIndex] += 1;
+			pixelPerPointCounts[pointIndex] += 1;
 		}
 	}
 
 	for (int i = 0; i < diagramPointsCount; ++i) {
 		Color24bit * color = &colors[i];
-		color->b = (uint8_t)(bSums[i] / bCounts[i] + 0.5);
-		color->g = (uint8_t)(gSums[i] / gCounts[i] + 0.5);
-		color->r = (uint8_t)(rSums[i] / rCounts[i] + 0.5);
+		color->b = (uint8_t)(bSums[i] / pixelPerPointCounts[i] + 0.5);
+		color->g = (uint8_t)(gSums[i] / pixelPerPointCounts[i] + 0.5);
+		color->r = (uint8_t)(rSums[i] / pixelPerPointCounts[i] + 0.5);
 	}
 }
 

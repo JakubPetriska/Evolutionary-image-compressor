@@ -14,11 +14,9 @@ namespace lossycompressor {
 
 		// Holds sums of colors and counts of pixels
 		float * rSums;
-		int * rCounts;
 		float * gSums;
-		int * gCounts;
 		float * bSums;
-		int * bCounts;
+		int * pixelPerPointCounts;
 
 		// Array used to store assignment of color to diagram points
 		Color24bit * colors;

@@ -5,8 +5,8 @@
 using namespace lossycompressor;
 
 FitnessEvaluator::FitnessEvaluator(
-	int sourceWidth, int sourceHeight, 
-	int diagramPointsCount, 
+	int sourceWidth, int sourceHeight,
+	int diagramPointsCount,
 	uint8_t * sourceImageData, int sourceDataRowWidthInBytes)
 	: sourceWidth(sourceWidth),
 	sourceHeight(sourceHeight),
@@ -16,24 +16,21 @@ FitnessEvaluator::FitnessEvaluator(
 
 FitnessEvaluator::~FitnessEvaluator() {}
 
-//double fitnessCalculationLengthsSum = 0;
+double fitnessCalculationLengthsSum = 0;
 
 float FitnessEvaluator::calculateFitness(VoronoiDiagram * diagram) {
 	//LARGE_INTEGER startTime, endTime;
 	//Utils::recordTime(&startTime);
-	
-	float fitness = calculateFitnessInternal(diagram);
-	
-	++fitnessEvaluationsCount;
-	//if (isCuda()) {
-	//	Utils::recordTime(&endTime);
-	//	++fitnessEvaluationsCount;
-	//	double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
 
-	//	fitnessCalculationLengthsSum += calculationTotalTime;
-	//	std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n",
-	//		calculationTotalTime, fitnessCalculationLengthsSum / fitnessEvaluationsCount);
-	//}
+	float fitness = calculateFitnessInternal(diagram);
+	++fitnessEvaluationsCount;
+
+	//Utils::recordTime(&endTime);
+	//double calculationTotalTime = Utils::calculateInterval(&startTime, &endTime);
+
+	//fitnessCalculationLengthsSum += calculationTotalTime;
+	//std::printf("Calculating fitness took %.4f seconds, average time is %.4f\n",
+	//	calculationTotalTime, fitnessCalculationLengthsSum / fitnessEvaluationsCount);
 
 	return fitness;
 }

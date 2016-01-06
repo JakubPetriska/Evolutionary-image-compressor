@@ -9,11 +9,9 @@ namespace lossycompressor {
 	/// Calculates fitness using only CPU.
 	class CpuFitnessEvaluator : public FitnessEvaluator {
 		float * rSums;
-		int * rCounts;
 		float * gSums;
-		int * gCounts;
 		float * bSums;
-		int * bCounts;
+		int * pixelPerPointCounts;
 
 		// Array used to store assignment of color to diagram points
 		Color24bit * colorsTmp;
