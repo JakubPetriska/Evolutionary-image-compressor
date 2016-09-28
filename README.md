@@ -1,11 +1,12 @@
 # Evolutionary image compressor
 Compresses images using evolutionary computation. 
 
-Image (bmp format only) is approximated as voronoi diagram and then improved either local search, evolutionary algorithm or memetic algorithm. So far local search provides the best results.
+Image (bmp format only) is approximated as voronoi diagram and then improved either by local search, evolutionary algorithm or memetic algorithm to represent the input image as precisely as possible. So far local search provides the best results.
 
-Computation uses is accelerated by CUDA.
+Computation is accelerated by CUDA.
 
 Documentation can be found [here][1].
+
 
 ## Example outputs 
 ![](test_images/Mona_Lisa.bmp)
