@@ -5,7 +5,7 @@ Image (bmp format only) is approximated as voronoi diagram and then improved eit
 
 Computation uses is accelerated by CUDA.
 
-Documentation can be found ![here](https://jakubpetriska.github.io/Evolutionary-image-compressor/doc/html/index.html).
+Documentation can be found ![here][1].
 
 ## Example outputs 
 ![](test_images/Mona_Lisa.bmp)
@@ -32,3 +32,6 @@ Documentation can be found ![here](https://jakubpetriska.github.io/Evolutionary-
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+	
+	
+[1]: https://jakubpetriska.github.io/Evolutionary-image-compressor/doc/html/index.html
