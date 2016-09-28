@@ -1,14 +1,18 @@
 # Evolutionary image compressor
-Application approximates image given in .bmp format as a voronoi diagram. Compression can be done using local search, evolutionary algorithm or memetic algorithm. Calculation is accelerated by CUDA.
+Compresses images using evolutionary computation. 
 
-Documentation can be found [here][https://jakubpetriska.github.io/Evolutionary-image-compressor/doc/html/index.html].
+Image (bmp format only) is approximated as voronoi diagram and then improved either local search, evolutionary algorithm or memetic algorithm. So far local search provides the best results.
+
+Computation uses is accelerated by CUDA.
+
+Documentation can be found ![here][https://jakubpetriska.github.io/Evolutionary-image-compressor/doc/html/index.html].
 
 ## Example outputs 
 ![](test_images/Mona_Lisa.bmp)
 ![](test_images/kubismus_krajina.bmp)
 ![](test_images/abstraktni_krivky.bmp)
 
-![](test_output/Mona_Lisa.bmp)
+![](test_output/Mona_lisa.bmp)
 ![](test_output/kubismus_krajina_3337.bmp)
 ![](test_output/abstraktni_krivky_1894.bmp)
 
