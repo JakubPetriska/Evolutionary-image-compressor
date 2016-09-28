@@ -5,7 +5,7 @@ Image (bmp format only) is approximated as voronoi diagram and then improved eit
 
 Computation uses is accelerated by CUDA.
 
-Documentation can be found ![here][1].
+Documentation can be found [here][1].
 
 ## Example outputs 
 ![](test_images/Mona_Lisa.bmp)
